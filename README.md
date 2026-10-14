@@ -1,5 +1,9 @@
 # Spydr / Camicaz
 
+Version courante : **0.9.0**, version de test a valider sur l'instrument.
+La version d'execution est definie dans
+`PC TP IR/TP_Master_version/yCamicaz/yorick/spydr/VERSION`.
+
 Sources historiques et travail de maintenance du logiciel de pilotage et
 d'acquisition d'une camera NICMOS, utilisant Yorick, Spydr et NI-DAQmx.
 
@@ -56,6 +60,13 @@ sont decrits dans [tools/tests/README.md](tools/tests/README.md).
 
 Le premier commit capture l'etat actuel, qui comprend deja des modifications.
 Il ne constitue pas une archive certifiee de la version stable d'origine.
+
+## Credits
+
+Spydr : Francois Rigaut. Plugin camera : Arnaud Sevin et Damien Gratadour.
+
+Reprise du projet, maintenance et ameliorations :
+**Yannis Benazza** - [yannis.benazza@obspm.fr](mailto:yannis.benazza@obspm.fr).
 
 ## Licences
 

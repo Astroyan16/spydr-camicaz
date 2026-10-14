@@ -1,5 +1,9 @@
 # Freerun rendering regression
 
+Release version checks (Python 3, no camera or GTK required):
+`python3 tools/tests/check_version.py`. These check package metadata and execute
+the GUI version initialization and title updates with GTK doubles.
+
 Run on Linux (or WSL) with Python 3, Yorick, Xvfb and libX11 installed:
 
 ```sh

@@ -197,6 +197,12 @@ class spydr:
       settings.props.gtk_button_images = True
 
       self.spydrtop = spydrtop
+      version_file = open(os.path.join(self.spydrtop, 'VERSION'), 'r')
+      try:
+         self.spydr_version = version_file.read().strip()
+      finally:
+         version_file.close()
+      self.app_title = 'Spydr / Camicaz v%s (test)' % self.spydr_version
       self.spydr_showlower = spydr_showlower
       self.spydr_defaultdpi = spydr_dpi
       self.spydr_dpi = spydr_dpi
@@ -207,6 +213,11 @@ class spydr:
 
       self.glade = gtk.glade.XML(os.path.join(self.spydrtop,'spydr.glade'))
       self.window = self.glade.get_widget('window1')
+      self.window.set_title(self.app_title)
+      about = self.glade.get_widget('aboutdialog')
+      about.set_name('Spydr / Camicaz')
+      about.set_version(self.spydr_version)
+      about.set_comments('NICMOS acquisition and image analysis - test release')
       # handle destroy event
       if (self.window):
          self.window.connect('destroy', self.destroy)
