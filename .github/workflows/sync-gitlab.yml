@@ -1,0 +1,53 @@
+name: Sync GitLab OBSPM
+
+on:
+  push:
+    branches: ['**']
+    tags: ['**']
+  delete:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 * * * *'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: gitlab-obspm-mirror
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      GITLAB_TOKEN: ${{ secrets.GITLAB_MIRROR_TOKEN }}
+      GITLAB_URL: https://gitlab.obspm.fr/ybenazza/spydr-camicaz.git
+    steps:
+      - name: Mirror current GitHub branches and tags
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -z "$GITLAB_TOKEN" ]; then
+            echo "::error::Configure the repository secret GITLAB_MIRROR_TOKEN first."
+            exit 1
+          fi
+          # Keep the token out of URLs, process arguments and Git configuration.
+          umask 077
+          askpass="$RUNNER_TEMP/gitlab-askpass.sh"
+          trap 'rm -f "$askpass"' EXIT
+          cat > "$askpass" <<'SCRIPT'
+          #!/bin/sh
+          case "$1" in
+            *Username*) printf '%s\n' 'oauth2' ;;
+            *Password*) printf '%s\n' "$GITLAB_TOKEN" ;;
+            *) exit 1 ;;
+          esac
+          SCRIPT
+          chmod 700 "$askpass"
+          git clone --bare "https://github.com/${GITHUB_REPOSITORY}.git" mirror.git
+          cd mirror.git
+          export GIT_ASKPASS="$askpass" GIT_TERMINAL_PROMPT=0
+          # Only branches and tags are mirrored; no GitHub-internal refs.
+          git -c credential.helper= push --atomic --prune "$GITLAB_URL" \
+            '+refs/heads/*:refs/heads/*' '+refs/tags/*:refs/tags/*'

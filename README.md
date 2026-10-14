@@ -14,6 +14,9 @@ est calculee par `End - Start`.
 
 ## Organisation
 
+La [synchronisation vers GitLab OBSPM](docs/GITLAB_MIRROR.md) est geree par
+GitHub Actions ; son activation requiert un secret de depot.
+
 - `PC TP IR/TP_Master_version/` : sources de la chaine historique et correctifs.
 - `tools/spydr-system-yorick/` : scripts de compilation et de lancement isoles.
 - `tools/build-spydr-system-yorick-bundle.ps1` : generation du dossier de test
