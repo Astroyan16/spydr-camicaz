@@ -4,6 +4,11 @@
 - Destination : https://gitlab.obspm.fr/ybenazza/spydr-camicaz
 - Workflow : `.github/workflows/sync-gitlab.yml`
 
+Synchronisation active et verifiee le 15 octobre 2026.
+Le jeton de projet `github-mirror` dispose uniquement du scope
+`write_repository` et expire le 14 novembre 2026. Renouveler ce jeton et
+mettre a jour le secret GitHub `GITLAB_MIRROR_TOKEN` avant cette date.
+
 Le workflow copie les branches et les tags apres un push GitHub, lors d'une
 suppression de reference, sur demande et toutes les heures (minute 17 UTC).
 Les executions planifiees dependent de la disponibilite de GitHub Actions.
