@@ -16,6 +16,7 @@ est calculee par `End - Start`.
 
 La [synchronisation vers GitLab OBSPM](docs/GITLAB_MIRROR.md) est active via
 GitHub Actions, apres chaque push et avec un controle horaire.
+Le [CLI glab](docs/GLAB.md) permet aussi l'acces local aux outils de suivi GitLab.
 
 - `PC TP IR/TP_Master_version/` : sources de la chaine historique et correctifs.
 - `tools/spydr-system-yorick/` : scripts de compilation et de lancement isoles.
