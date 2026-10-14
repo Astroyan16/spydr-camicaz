@@ -5,9 +5,10 @@
 - Workflow : `.github/workflows/sync-gitlab.yml`
 
 Synchronisation active et verifiee le 15 octobre 2026.
-Le jeton de projet `github-mirror` dispose uniquement du scope
-`write_repository` et expire le 14 novembre 2026. Renouveler ce jeton et
+Le jeton de projet `github-mirror-2027` dispose uniquement du scope
+`write_repository` et expire le 14 octobre 2027. Renouveler ce jeton et
 mettre a jour le secret GitHub `GITLAB_MIRROR_TOKEN` avant cette date.
+L'ancien jeton mensuel a ete revoque apres validation du nouveau jeton.
 
 Le workflow copie les branches et les tags apres un push GitHub, lors d'une
 suppression de reference, sur demande et toutes les heures (minute 17 UTC).
