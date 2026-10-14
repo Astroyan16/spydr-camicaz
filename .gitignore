@@ -1,0 +1,39 @@
+# Only the active source snapshot is tracked under "PC TP IR".
+/PC TP IR/*
+!/PC TP IR/TP_Master_version/
+!/PC TP IR/TP_Master_version/**
+
+# Historical repositories kept for reference only.
+/PC TP IR/yorick.git/
+/PC TP IR/Yorick/
+
+# Generated bundles can be rebuilt from tools/.
+/dist/
+
+# Subversion metadata and backup copies from the legacy workspace.
+**/.svn/
+**/*.svn-base
+**/*.i~
+**/*.i#
+**/*.py~
+**/*.vi
+**/*~
+
+# Build outputs and runtime artifacts.
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+**/*.o
+**/*.obj
+**/*.a
+**/*.so
+**/*.dll
+**/*.exe
+**/*.log
+**/*.tmp
+
+# OS/editor noise.
+/.codex-remote-attachments/
+.DS_Store
+Thumbs.db
+desktop.ini

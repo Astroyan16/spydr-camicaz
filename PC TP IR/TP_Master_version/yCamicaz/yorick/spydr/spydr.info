@@ -1,0 +1,34 @@
+Package: spydr
+Kind: package
+Version: 0.8.2
+Revision: 1
+Description: Image display and analysis GUI
+License: GPLv3
+Author: Francois Rigaut
+Maintainer: Francois Rigaut <frigaut@users.sourceforge.net>
+OS: all
+Depends: yorick(>=2.1.04x), yutils(>=1.0), imutil(>0.5), yao(>4.0)
+Source: http://www.maumae.net/yorick/packages/tarballs/spydr-%v-pkg.tgz
+Source-MD5:
+Source-Directory: contrib/spydr
+DocFiles: README LICENSE
+Homepage: http://www.maumae.net/yorick/doc/plugins.php
+DescDetail: <<
+See README and help,spydr
+<<
+DescUsage: <<
+Installation from source:
+
+Since version 0.6, spydr uses current_mouse(), and is therefore purely
+interpreted. No need for a compiler.
+
+make install
+
+to install
+
+You will need also the glade libraries, python, and the pygtk modules.
+
+<<
+DescPort: <<
+N/A
+<<
