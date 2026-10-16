@@ -17,6 +17,10 @@ No camera connection or NI driver is required.
 
 Checks include:
 
+- Return from an 800-exposure cube (200 ABBA cycles) to a full-frame live image
+  despite a simulated stale vertical crop. The cube is synthetic; acquisition,
+  chopping and FITS saving are not exercised by this framing check.
+- Ordinary freerun restarts preserve a deliberately selected zoom.
 - The visible frame remains unchanged while its replacement is being drawn.
 - A completed frame changes the display and survives an explicit redraw.
 - 100 graphics-window recreations preserve the zoom limits and palette.

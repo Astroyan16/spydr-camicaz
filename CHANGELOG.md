@@ -1,5 +1,13 @@
 # Historique Spydr / Camicaz
 
+## 0.9.1 - 2026-10-16 (test)
+
+- Retour au cadrage automatique de l'image principale au passage d'un cube
+  enregistre au freerun, pour eviter de conserver un zoom vertical residuel.
+- Le zoom utilisateur reste conserve lors d'un redemarrage ordinaire du freerun.
+- Regression Yorick/Gist avec un cube de 800 expositions (200 cycles ABBA) et
+  un cadrage vertical residuel simule. Validation materielle encore necessaire.
+
 ## 0.9.0 - 2026-10-14 (test)
 
 - Identification commune dans le titre de la fenetre, le dialogue A propos,

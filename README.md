@@ -1,6 +1,6 @@
 # Spydr / Camicaz
 
-Version courante : **0.9.0**, version de test a valider sur l'instrument.
+Version courante : **0.9.1**, version de test a valider sur l'instrument.
 La version d'execution est definie dans
 `PC TP IR/TP_Master_version/yCamicaz/yorick/spydr/VERSION`.
 

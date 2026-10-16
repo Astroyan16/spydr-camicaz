@@ -99,6 +99,28 @@ cam_disp_select,-1,0;
 check,cam_current_ndisp==1,"empty combo corrupted selection";
 cam_stop_freerun;
 
+// A completed 200-cycle ABBA sequence leaves an 800-exposure camera cube.
+// Model the stale vertical crop reported when returning from cube browsing.
+window,spydr_wins(1);
+limits,0,256,0,256,square=1;
+full_frame_limits=limits();
+cam_buffer=array(char(10),256,256,2,4*200);
+limits,0,256,64,192,square=1;
+cam_start_freerun,1,0;
+window,spydr_wins(1);
+check,max(abs(limits()(1:4)-full_frame_limits(1:4)))<1.e-6,
+  "cube-to-freerun retained the sequence vertical crop";
+cam_stop_freerun;
+
+// Ordinary live restarts must still preserve a deliberate user zoom.
+limits,40,140,50,150,square=1;
+user_zoom=limits();
+cam_start_freerun,1,0;
+window,spydr_wins(1);
+check,allof(limits()==user_zoom),"ordinary freerun restart lost user zoom";
+cam_stop_freerun;
+write,"PASS ABBA cube-to-live framing and ordinary restart zoom";
+
 // A partial draw must leave the previous visible frame unchanged.
 spydr_append=0;
 cam_current_ndisp=2; cam_current_bckg=0;
