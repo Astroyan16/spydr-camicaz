@@ -39,6 +39,7 @@ func cam_savebckg
 
 func cam_sethome
 {
+  if (cam_recording) return;
   cam_homing,cam_handle;
 }
 
@@ -94,12 +95,26 @@ func cam_stop_freerun(void)
   after,-,freerun_loop;
 }
 
+func cam_set_freerun_chopping(enabled)
+{
+  extern cam_freechop;
+  if (!cam_freerun) return;
+  // Apply between frames, without restarting acquisition or resetting the phase.
+  if (!enabled) cam_freechop = -1;
+  else if (cam_freechop < 0) cam_freechop = 1;
+}
+
 func cam_start_freerun(run,chop){
   extern cam_freerun;
   extern cam_freechop;
 
   if (!run) {
     cam_stop_freerun;
+    return;
+  }
+  if (cam_recording) {
+    spydr_pyk_status_push,"Finish or save the current recording before starting freerun.";
+    spydr_pyk,cmd_cam+"glade.get_widget('freerun').set_active(0)";
     return;
   }
   if (cam_freerun) return;
@@ -147,6 +162,12 @@ func freerun_loop(one=){
   
 func snap_image(nb_images){
   extern cam_buffer,cam_name;
+  if (cam_recording) return;
+  if (catch(-1)) {
+    cam_record_controls,0;
+    spydr_pyk_status_push,"Snapshot failed: "+catch_message;
+    return;
+  }
   
   if(nb_images==1)
     cam_buffer = -cam_get_image(cam_handle);
@@ -163,7 +184,19 @@ func snap_image(nb_images){
 }
 
 func apply_param(filter,expo,latency){
+  extern cam_applied_params;
+  if (cam_recording) return;
+  cam_applied_params=[];
+  if (catch(-1)) {
+    cam_record_controls,0;
+    spydr_pyk_status_push,"Apply failed: "+catch_message;
+    return;
+  }
+  if (filter<0 || filter>3 || expo<0 || expo>6 || latency<0 || latency>3)
+    error,"Select valid camera parameters";
   cam_set_param, cam_handle, expo, latency, filter;
+  if (!cam_is_open(cam_handle)) error,"Camera unavailable";
+  cam_applied_params=[filter,expo,latency];
   
   spydr_pyk,cmd_cam+"glade.get_widget('apply_param').set_sensitive(1)";
   spydr_pyk,cmd_cam+"glade.get_widget('acquire').set_sensitive(1)";
@@ -232,7 +265,7 @@ func create_cam_filename(&filename,ntype,obj,nim,filter,texp,lat)
   if ((obj == "") || (obj == [])) obj = "unknown";
   
   tmp = strtok(timestamp()," ",5);
-  file_date = tmp(2)+tmp(3)+"-"+tmp(5)+"-"+strtok(tmp(4),":",3)(1)+strtok(tmp(4),":",3)(2);
+  file_date = tmp(2)+tmp(3)+"-"+tmp(5)+"-"+strtok(tmp(4),":",3)(1)+strtok(tmp(4),":",3)(2)+strtok(tmp(4),":",3)(3);
 
   if (filter == 0) file_filt = "dark";
   if (filter == 1) file_filt = "J";
@@ -257,26 +290,110 @@ func create_cam_filename(&filename,ntype,obj,nim,filter,texp,lat)
   //spydr_pyk,swrite(format=cmd_cam+"save_cam_data('%s')",filename);
 }
 
+func cam_chop_pattern(seqid)
+{
+  // Logical A=0 (DTR off), B=1 (DTR on), as in the original ABAB mode.
+  if (seqid == -1) return [];
+  if (seqid == 0) return [0,1];
+  if (seqid == 1) return [0,1,1,0];
+  if (seqid == 2) return [0,0,1,1];
+  if (seqid == 3) return [0,0,0,0,0,1,1,1,1,1];
+  if (seqid == 4) return [0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1];
+  if (seqid == 5) return [0,1,1,0,1,0,0,1,1,0,0,1,0,1,1,0];
+  error,"Unknown chopping sequence";
+}
+
+func cam_record_controls(busy)
+{
+  spydr_pyk,cmd_cam+swrite(format="glade.get_widget('record').set_sensitive(%d)",!busy);
+  spydr_pyk,cmd_cam+swrite(format="glade.get_widget('apply_param').set_sensitive(%d)",!busy);
+  spydr_pyk,cmd_cam+swrite(format="glade.get_widget('freerun').set_sensitive(%d)",!busy);
+  spydr_pyk,cmd_cam+swrite(format="glade.get_widget('acquire').set_sensitive(%d)",!busy);
+  spydr_pyk,cmd_cam+swrite(format="glade.get_widget('button_stop').set_sensitive(%d)",busy);
+}
+
+func cam_unique_filename(base)
+{
+  candidate=base+".fits";
+  index=0;
+  while ((existing=open(candidate,"r",1))) {
+    close,existing;
+    index++;
+    candidate=base+swrite(format="-%03d.fits",index);
+  }
+  return candidate;
+}
+
+func cam_finish_record(reason)
+{
+  extern cam_recording,stop_record,cam_filename,cam_record_partial;
+  if (!cam_recording) return;
+  after,-,add_image;
+  stop_record=1;
+  if (catch(-1)) {
+    // Keep the cube and acquisition lock until Stop retries a successful save.
+    spydr_pyk_status_push,"Save failed: "+catch_message+". Data retained; fix the disk/path and press Stop to retry.";
+    return;
+  }
+  if (cam_seqind>0) {
+    if (cam_seqind<cam_nimseq && !cam_record_partial) {
+      cam_filename+="-partial";
+      cam_record_partial=1;
+    }
+    camdata_save,0;
+  }
+  cam_recording=0;
+  cam_record_controls,0;
+  spydr_pyk_status_push,reason;
+  if (cam_seqind>0) cam_load;
+}
+
 func record_image(typed,objectd,nb_images,fold,seqid,exp,lat,filt)
 {
   extern cam_filename;
   extern cam_buffer;
   extern cam_freerun;
   extern cam_seqid,cam_seqind,cam_nimseq;
+  extern cam_seqpattern;
   extern stop_record;
+  extern cam_recording,cam_record_partial;
   
+  if (cam_recording) {
+    spydr_pyk_status_push,"A recording is still acquiring or waiting to be saved.";
+    return;
+  }
+  cam_recording=1;
+  cam_seqind=0;
+  cam_record_partial=0;
+  cam_record_controls,1;
+  if (catch(-1)) {
+    cam_finish_record,"Record stopped: "+catch_message;
+    return;
+  }
+  pattern = cam_chop_pattern(seqid);
+  if (nb_images < 1 || nb_images != long(nb_images))
+    error,"Sequence count must be a positive integer";
+  if (filt<0 || filt>3 || exp<0 || exp>6 || lat<0 || lat>3)
+    error,"Select valid camera parameters";
+  if (numberof(cam_applied_params)!=3)
+    error,"Apply camera parameters before starting Record";
+  hardware_filters=[0,2,3,1];
+  if (!allof(cam_applied_params==[hardware_filters(filt+1),exp,lat]))
+    error,"Camera parameters changed; click Apply before starting Record";
+  after,-,add_image;
   cam_stop_freerun;
+  if (!cam_is_open(cam_handle)) error,"Camera unavailable";
 
   create_cam_filename,filename,typed,objectd,nb_images,filt,exp,lat;
   cam_filename = fold+"/"+filename;
   
   cam_buffer = -cam_get_image(cam_handle)(,,,-:1:1);
+  if (!cam_is_open(cam_handle)) error,"Camera acquisition failed";
 
   cam_seqid = seqid;
-  if (seqid < 0)  cam_nimseq = nb_images;
-  if (seqid == 0) cam_nimseq = 2 * nb_images;
-  if (seqid == 1) cam_nimseq = 4 * nb_images;
-  if (seqid == 2) cam_nimseq = 10 * nb_images;
+  // Snapshot the mode for this recording; later GUI changes affect the next one.
+  cam_seqpattern = pattern;
+  cam_nimseq = nb_images * max(1,numberof(pattern));
 
   cam_seqind = stop_record = 0;
   
@@ -288,45 +405,32 @@ func add_image
   extern cam_buffer;
   extern cam_seqind;
 
-  if (stop_record) {
-    camdata_save;
+  if (!cam_recording) return;
+  after,-,add_image;
+  if (catch(-1)) {
+    cam_finish_record,"Record stopped: "+catch_message;
     return;
   }
-  if (cam_seqid < 0)
-    grow,cam_buffer,-cam_get_next_image(cam_handle);
-  
-  if (cam_seqid == 0) {
-    cam_chopping,cam_handle,(cam_seqind % 2);
-    pause,500;
-    grow,cam_buffer,-cam_get_next_image(cam_handle);
+  if (stop_record) {
+    cam_finish_record,"Recording stopped; acquired exposures saved.";
+    return;
   }
-  
-  if (cam_seqid == 1) {
-    if (cam_seqind % 4 == 1)
-      cam_chopping,cam_handle,0;
-    if (cam_seqind % 4 == 3)
-      cam_chopping,cam_handle,1;
+  if (!cam_is_open(cam_handle)) error,"Camera unavailable";
+  if (numberof(cam_seqpattern)) {
+    phase = cam_seqind % numberof(cam_seqpattern) + 1;
+    position = cam_seqpattern(phase);
+    // Always impose the first position, even after a freerun ending on B.
+    if (cam_seqind == 0) cam_chopping,cam_handle,position;
+    else {
+      previous = (cam_seqind-1) % numberof(cam_seqpattern) + 1;
+      if (position != cam_seqpattern(previous)) cam_chopping,cam_handle,position;
+    }
+    // Keep the existing settling delay before requesting the next exposure.
     pause,500;
-    grow,cam_buffer,-cam_get_next_image(cam_handle);
   }
-
-  if (cam_seqid == 2) {
-    if (cam_seqind % 4 == 2)
-      cam_chopping,cam_handle,0;
-    if (cam_seqind % 4 == 0)
-      cam_chopping,cam_handle,1;
-    pause,500;
-    grow,cam_buffer,-cam_get_next_image(cam_handle);
-  }
-
-  if (cam_seqid == 3) {
-    if (cam_seqind % 10 == 5)
-      cam_chopping,cam_handle,0;
-    if (cam_seqind % 4 == 0)
-      cam_chopping,cam_handle,1;
-    pause,500;
-    grow,cam_buffer,-cam_get_next_image(cam_handle);
-  }
+  frame=-cam_get_next_image(cam_handle);
+  if (!cam_is_open(cam_handle)) error,"Camera acquisition failed";
+  grow,cam_buffer,frame;
 
   cam_seqind += 1;
 
@@ -335,7 +439,7 @@ func add_image
   spydr_pyk,swrite(format=cmd_cam+"glade.get_widget('obs_progress').set_text('%s')",msg);
   
   if (cam_nimseq > cam_seqind) after,0.1,add_image;
-  else camdata_save,0;
+  else cam_finish_record,"Recording complete.";
 }
 
 func camdata_save(bckg)
@@ -343,40 +447,31 @@ func camdata_save(bckg)
   extern cam_buffer;
   extern cam_filename;
   
-  if (cam_seqind > 1) cam_buffer = cam_buffer(,,,2:);
-  else cam_buffer = cam_buffer(,,,2);
+  if (cam_seqind > 1) data = cam_buffer(,,,2:);
+  else data = cam_buffer(,,,2);
+  filename=cam_unique_filename(cam_filename);
 
   if (bckg) {
-    filename_bckg = cam_filename + "-" + bckg;
-    if (!strmatch(filename_bckg,".fits")) filename_bckg += ".fits";
+    filename_bckg = cam_unique_filename(cam_filename + "-" + bckg);
   }
   
-  if (!strmatch(cam_filename,".fits")) cam_filename += ".fits";
-  
-  fits_write,cam_filename,cam_buffer,overwrite=1;
-  if (bckg) fits_write,filename_bckg,cam_bckg_buffer,overwrite=1;
-  
-  spydr_pyk,swrite(format=cmd_cam+"glade.get_widget('record').set_sensitive(%d)",1);
-  spydr_pyk,swrite(format=cmd_cam+"glade.get_widget('apply_param').set_sensitive(%d)",1);
-  spydr_pyk,swrite(format=cmd_cam+"glade.get_widget('freerun').set_sensitive(%d)",1);
-  spydr_pyk,swrite(format=cmd_cam+"glade.get_widget('acquire').set_sensitive(%d)",1);
-
-  cam_load;
+  fits_write,filename,data,overwrite=0;
+  if (bckg) fits_write,filename_bckg,cam_bckg_buffer,overwrite=0;
+  cam_filename=filename;
+  cam_buffer=data;
 }
 
 func abort_record
 {
   extern stop_record;
+  if (!cam_recording) return;
   stop_record = 1;
-  spydr_pyk,swrite(format=cmd_cam+"glade.get_widget('record').set_sensitive(%d)",1);
-  spydr_pyk,swrite(format=cmd_cam+"glade.get_widget('apply_param').set_sensitive(%d)",1);
-  spydr_pyk,swrite(format=cmd_cam+"glade.get_widget('freerun').set_sensitive(%d)",1);
-  spydr_pyk,swrite(format=cmd_cam+"glade.get_widget('acquire').set_sensitive(%d)",1);
-  //spydr_pyk,swrite(format=cmd_cam+"glade.get_widget('record').set_sensitive(%d)",1);  
+  cam_finish_record,"Recording stopped; acquired exposures saved.";
 }
 
 func yo_cam_homing
 {
+  if (cam_recording) return;
   spydr_pyk,swrite(format=cmd_cam+"glade.get_widget('record').set_sensitive(%d)",0);
   spydr_pyk,swrite(format=cmd_cam+"glade.get_widget('apply_param').set_sensitive(%d)",0);
   spydr_pyk,swrite(format=cmd_cam+"glade.get_widget('freerun').set_sensitive(%d)",0);

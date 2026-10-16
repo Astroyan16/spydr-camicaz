@@ -1,6 +1,6 @@
 # Spydr / Camicaz
 
-Version courante : **0.9.1**, version de test a valider sur l'instrument.
+Version courante : **0.9.7**, version de test a valider sur l'instrument.
 La version d'execution est definie dans
 `PC TP IR/TP_Master_version/yCamicaz/yorick/spydr/VERSION`.
 
@@ -61,6 +61,16 @@ n'embarque pas les pilotes NI ni un environnement Linux complet.
 Les correctifs doivent etre valides sur l'instrument avant d'etre consideres
 comme une version stable. Les tests logiciels disponibles et leurs limites
 sont decrits dans [tools/tests/README.md](tools/tests/README.md).
+
+Depuis la 0.9.6, cliquer sur Apply avant le premier Record et apres toute
+modification du filtre, du temps de pose ou de la latence. Un Record dont les
+parametres affiches ne correspondent pas au dernier Apply reussi est refuse.
+Les fichiers incluent les secondes et un suffixe numerote en cas de collision ;
+l'ecrasement est desactive. Les acquisitions interrompues portent `-partial`.
+En cas d'echec de sauvegarde, ne pas quitter le logiciel : le cube reste en
+memoire et les acquisitions restent verrouillees. Corriger le probleme disque
+ou les permissions du dossier de destination, puis appuyer sur Stop pour
+retenter la sauvegarde. Ce stockage en memoire ne protege pas d'un arret du PC.
 
 Le premier commit capture l'etat actuel, qui comprend deja des modifications.
 Il ne constitue pas une archive certifiee de la version stable d'origine.

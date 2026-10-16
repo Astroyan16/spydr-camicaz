@@ -2396,7 +2396,8 @@ Test</property>
 ABBA
 2A2B
 5A5B
-10A10B</property>
+10A10B
+ABBABAABBAABABBA</property>
                                                   </widget>
                                                   <packing>
                                                     <property name="expand">False</property>

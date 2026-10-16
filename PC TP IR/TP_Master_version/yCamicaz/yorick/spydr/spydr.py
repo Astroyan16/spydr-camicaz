@@ -1184,11 +1184,20 @@ class spydr:
       active = wdg.get_active();
       if active:
          self.glade.get_widget('chopbox').set_sensitive(1)
-         self.glade.get_widget('comboseq').set_active(0)
+         if self.glade.get_widget('comboseq').get_active() < 0:
+            self.glade.get_widget('comboseq').set_active(0)
       else:
          self.glade.get_widget('chopbox').set_sensitive(0)
+      if self.glade.get_widget('freerun').get_active():
+         self.py2yo('cam_set_freerun_chopping %d' % active)
 
    def on_record_clicked(self,wdg,*args):
+      # SELECT_FOLDER distinguishes the selected folder from its displayed parent.
+      fold = self.glade.get_widget('data_location').get_filename()
+      if not fold or not os.path.isdir(fold):
+         self.pyk_error('Please select an existing recording folder before starting Record.')
+         return
+      fold = fold.replace('\\', '\\\\').replace('"', '\\"')
       if self.glade.get_widget('freerun').get_active():
          self.glade.get_widget('freerun').set_active(0)
       self.glade.get_widget('apply_param').set_sensitive(0)
@@ -1200,7 +1209,6 @@ class spydr:
       typed = self.glade.get_widget('combotype').get_active()
       objectd = self.glade.get_widget('objname').get_text()
       nb_images  = self.glade.get_widget('spin_nseq').get_value_as_int()
-      fold = self.glade.get_widget('data_location').get_current_folder()
       active = self.glade.get_widget('check_chop').get_active()
       exp = self.glade.get_widget('num_expo').get_active()
       lat = self.glade.get_widget('num_latency').get_active()
@@ -1212,7 +1220,6 @@ class spydr:
       self.py2yo('record_image %d "%s" %d "%s" %d %d %d %d' % (typed,objectd,nb_images,fold,seqid,exp,lat,filt))
 
    def on_button_stop_clicked(self,wdg,*args):
-      self.glade.get_widget('record').set_sensitive(1)
       self.py2yo('abort_record')
 
    def on_homing_clicked(self,wdg,*args):

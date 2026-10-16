@@ -346,7 +346,7 @@ int32 Camicaz::getLastImage(long int *data) {
     this->newFrame = false;
     this->camGetImage = false;
     long index = 0;
-    long origins[4] = { dims[0] / 2 - 1, (dims[1] + 1) * dims[0] / 2 , dims[1] * dims[0] / 2, 0};
+    long origins[4] = { dims[0] / 2, (dims[1] + 1) * dims[0] / 2 , dims[1] * dims[0] / 2, 0};
     uInt32 *ptrData = doubleBuffer;
     for (long indexn = 0; indexn < dims[2]; indexn++) {
       for (long indexx = 0; indexx < dims[0] / 2; indexx++) {
@@ -408,29 +408,30 @@ int Camicaz::sendCmd(TimeoutSerial *serialPort, std::string *result, std::string
 }
 
 int Camicaz::setExpo(int expo) {
+  int result = sendCmd(this->serialCam, "t",expo, false);
+  if (result < 0) return result;
   this->expo = expo;
-  sendCmd(this->serialCam, "t",this->expo, false);
   return expo;
 }
 
 int Camicaz::setLatency(int latency) {
+  int result = sendCmd(this->serialCam, "l",latency, false);
+  if (result < 0) return result;
   this->latency = latency;
-  sendCmd(this->serialCam, "l",this->latency, false);
   return latency;
 }
 
 int Camicaz::setChopping(int chopping){
   if (serialFdChopping == 0) {
     cerr << "Serial Chopping closed\n";
-    return 0;
+    return -1;
   }
 
-  this->chopping = chopping;
   int status;
   
   if (ioctl(serialFdChopping, TIOCMGET, &status) == -1) {
     perror("get DTR state");
-    return 0;
+    return -1;
   }
  
   if (chopping==1) {
@@ -439,13 +440,16 @@ int Camicaz::setChopping(int chopping){
     status &= ~TIOCM_DTR;
   }
 
-  while (this->camAcquire)
+  while (this->camAcquire) {
+    if (!this->camOpen) return -1;
     usleep(25000);
+  }
 
   if (ioctl(serialFdChopping, TIOCMSET, &status) == -1) {
     perror("set DTR state");
-    return 0;
+    return -1;
   }
+  this->chopping = chopping;
   return chopping;
 }
 
@@ -483,15 +487,19 @@ int Camicaz::setHome() {
 }
 
 int Camicaz::setFilter(int filter) {
+  int result = sendCmd(this->serialCam, "f",filter, true);
+  if (result < 0) return result;
   this->filter = filter;
-  sendCmd(this->serialCam, "f",this->filter, true);
   return filter;
 }
 
 int Camicaz::setParam(int expo, int latency, int filter) {
-  setExpo(expo);
-  setLatency(latency);
-  setFilter(filter);
+  int result = setExpo(expo);
+  if (result < 0) return result;
+  result = setLatency(latency);
+  if (result < 0) return result;
+  result = setFilter(filter);
+  if (result < 0) return result;
   return 0;
 }
 

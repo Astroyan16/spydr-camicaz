@@ -46,7 +46,7 @@ func cam_get_image(handle) {
   if (fail_after_read) camera_open=0;
   return -array(acquisitions%200,256,256,2);
 }
-func cam_chopping(handle,state) {}
+func cam_chopping(handle,state) { extern chop_states; grow,chop_states,state; }
 
 spydr_wins=[0,1,2];
 spydr_defaultdpi=spydr_dpi=80;
@@ -58,13 +58,21 @@ _spydr_pyk_proc=1; gui_realized=0;
 spydr_append=0; spydr_nim=0; imnum=[];
 spydr_disp=disp_tv;
 cam_freerun=0; cam_current_ndisp=0; cam_current_bckg=0;
+cam_recording=0;
 cam_buffer_content=[];
 cam_handle=0; cmd_cam="";
 camera_open=1; fail_acquire=fail_after_read=fail_render=probe_render=0;
 acquisitions=pending=max_pending=0;
+chop_states=[];
 window,0,width=400,height=400,style="nobox.gs",wait=1;
 palette,"gray.gp";
 limits,0,256,0,256;
+
+// An unsaved recording must not be overwritten by a fresh live acquisition.
+cam_recording=1;
+cam_start_freerun,1,0;
+check,!cam_freerun && acquisitions==0 && pending==0,"freerun overwrote unsaved recording";
+cam_recording=0;
 
 // Append must remain functional for ordinary images, but never for live images.
 spydr,array(20,256,256);
@@ -82,6 +90,42 @@ cam_stop_freerun;
 check,pending==0 && !cam_freerun,"stop left a pending callback";
 freerun_loop;
 check,acquisitions==before,"stopped callback acquired";
+
+// Changing chopping during live acquisition must not restart or queue frames.
+cam_start_freerun,1,0;
+before=acquisitions;
+cam_set_freerun_chopping,1;
+check,acquisitions==before && pending==1 && numberof(chop_states)==0,
+  "enabling chopping acquired, queued or moved hardware immediately";
+freerun_loop;
+check,numberof(chop_states)==1 && chop_states(1)==1,
+  "live enable did not chop on the next frame";
+cam_set_freerun_chopping,1;
+freerun_loop;
+check,numberof(chop_states)==2 && chop_states(2)==0,
+  "repeated enable reset chopping phase";
+before=acquisitions;
+cam_set_freerun_chopping,0;
+check,acquisitions==before && pending==1,"disabling chopping restarted acquisition";
+freerun_loop;
+check,numberof(chop_states)==2 && cam_freechop==-1,
+  "live disable did not stop chopping";
+cam_set_freerun_chopping,1;
+freerun_loop;
+check,numberof(chop_states)==3 && chop_states(3)==1,
+  "live re-enable did not resume chopping";
+cam_stop_freerun;
+before=cam_freechop;
+cam_set_freerun_chopping,0;
+check,cam_freechop==before && pending==0,"stopped toggle affected acquisition";
+cam_start_freerun,1,0;
+check,cam_freechop==-1 && numberof(chop_states)==3,"restart ignored disabled checkbox";
+cam_stop_freerun;
+cam_start_freerun,1,1;
+check,numberof(chop_states)==4 && chop_states(4)==1,"restart ignored enabled checkbox";
+cam_stop_freerun;
+check,max_pending==1,"chopping changes duplicated callbacks";
+write,"PASS live chopping enable/disable without restart";
 
 // Start/End/Diff and background subtraction, without asynchronous GUI replies.
 cam_freerun=1;

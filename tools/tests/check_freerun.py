@@ -90,7 +90,7 @@ def main():
     code = extract(main_src, "struct", "spydr_struct")
     for name in ("disp_tv", "spydr_draw_tv_frame", "spydr_resize_main", "spydr", "spydr_clean", "set_imnum"):
         code += extract(main_src, "func", name)
-    for name in ("cam_stop_freerun", "cam_start_freerun", "freerun_loop",
+    for name in ("cam_stop_freerun", "cam_set_freerun_chopping", "cam_start_freerun", "freerun_loop",
                  "cam_disp_select", "cam_load"):
         code += extract(camera_src, "func", name)
     code += Path(__file__).with_name("freerun_checks.i").read_text()
