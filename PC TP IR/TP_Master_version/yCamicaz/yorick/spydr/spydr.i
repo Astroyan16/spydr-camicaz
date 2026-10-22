@@ -254,11 +254,14 @@
  *
  */
 
-spydr_version = "0.8.3";
-
 camtop = get_env("CAMTOP");
 if (!camtop) 
   error,"CAMTOP is not defined!";
+
+spydr_version_file = open(camtop+"/yorick/spydr/VERSION", "r");
+spydr_version = string(0);
+read,spydr_version_file,spydr_version,format="%s";
+close,spydr_version_file;
 
 require,camtop+"/yorick/spydr/spydr_pyk.i";
 require,"astro_util1.i";
@@ -1807,7 +1810,7 @@ func gui_update(void)
 
   if (imnum==[]) return; // GUI open but no image
 
-  spydr_pyk,swrite(format="window.set_title('spydr - %s')",spydrs(imnum).name);
+  spydr_pyk,swrite(format="window.set_title(self.app_title + ' - %s')",spydrs(imnum).name);
   spydr_pyk,swrite(format="current_image_saveas_name = '%s'",escapechar2save(spydrs(imnum).saveasname));
   spydr_pyk,swrite(format="y_parm_update('binsize',%f)",float(spydr_histbinsize));
   spydr_pyk,swrite(format="y_parm_update('nlevs',%d)",long(spydr_nlevs));
@@ -2115,7 +2118,7 @@ func set_imnum(nn,from_python,force=)
     spydr_pyk,swrite(format="set_imnum(%d,%d,%d)",nn,spydr_nim,(spydr_nim>1));
   }
   if (gui_realized) {
-    spydr_pyk,swrite(format="window.set_title('spydr - %s')",spydrs(nn).name);
+    spydr_pyk,swrite(format="window.set_title(self.app_title + ' - %s')",spydrs(nn).name);
     spydr_pyk,swrite(format="current_image_saveas_name = '%s'",escapechar2save(spydrs(imnum).saveasname));
   }
 }
@@ -2943,7 +2946,7 @@ if (spydr_context=="called_from_shell") spydr,targets;
 
 func spydr_ready_func(void)
 {
-  msg = swrite(format="SPYDR_CAM v%s ready",spydr_version);
+  msg = swrite(format="Spydr / Camicaz v%s (test) ready",spydr_version);
   spydr_pyk_status_push,msg;
   write,format="%s\n",msg;
   maybe_prompt;

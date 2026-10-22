@@ -5,7 +5,7 @@
   <widget class="GtkWindow" id="window1">
     <property name="visible">True</property>
     <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_ENTER_NOTIFY_MASK | GDK_LEAVE_NOTIFY_MASK</property>
-    <property name="title" translatable="yes">spydr_cam</property>
+    <property name="title" translatable="yes">Spydr / Camicaz</property>
     <property name="resizable">False</property>
     <signal name="size_request" handler="on_window1_size_request"/>
     <signal name="focus_out_event" handler="on_window1_focus_out_event"/>
@@ -3301,13 +3301,12 @@ calculations (should include all the star flux but no more) [pixels]</property>
   <widget class="GtkAboutDialog" id="aboutdialog">
     <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
     <property name="border_width">5</property>
-    <property name="title" translatable="yes">About Spydr</property>
+    <property name="title" translatable="yes">About Spydr / Camicaz</property>
     <property name="resizable">False</property>
     <property name="window_position">center-on-parent</property>
     <property name="destroy_with_parent">True</property>
     <property name="type_hint">dialog</property>
-    <property name="program_name">Spydr</property>
-    <property name="version">0.8.0</property>
+    <property name="program_name">Spydr / Camicaz</property>
     <property name="copyright" translatable="yes">Francois Rigaut, Copyright 2007-2009
 Camera plugin by A. S. &amp; D. G.</property>
     <property name="comments" translatable="yes">Display and Analysis of fits images and data cube</property>
@@ -3333,7 +3332,9 @@ thanks to:
 - Damien Gratadour 
 for suggestions to improve this software.
 Camera plugin by Arnaud Sevin &amp; 
-Damien Gratadour</property>
+Damien Gratadour
+Maintenance and improvements:
+Yannis Benazza - yannis.benazza@obspm.fr</property>
     <property name="documenters">Francois Rigaut, frigaut@gemini.edu</property>
     <child internal-child="vbox">
       <widget class="GtkVBox" id="dialog-vbox1">

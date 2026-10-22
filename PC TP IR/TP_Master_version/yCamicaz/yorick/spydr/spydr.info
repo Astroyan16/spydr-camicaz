@@ -1,11 +1,11 @@
 Package: spydr
 Kind: package
-Version: 0.8.2
+Version: 0.9.0
 Revision: 1
 Description: Image display and analysis GUI
 License: GPLv3
 Author: Francois Rigaut
-Maintainer: Francois Rigaut <frigaut@users.sourceforge.net>
+Maintainer: Yannis Benazza <yannis.benazza@obspm.fr>
 OS: all
 Depends: yorick(>=2.1.04x), yutils(>=1.0), imutil(>0.5), yao(>4.0)
 Source: http://www.maumae.net/yorick/packages/tarballs/spydr-%v-pkg.tgz
