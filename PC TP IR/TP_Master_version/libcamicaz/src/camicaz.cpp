@@ -346,7 +346,7 @@ int32 Camicaz::getLastImage(long int *data) {
     this->newFrame = false;
     this->camGetImage = false;
     long index = 0;
-    long origins[4] = { dims[0] / 2 - 1, (dims[1] + 1) * dims[0] / 2 , dims[1] * dims[0] / 2, 0};
+    long origins[4] = { dims[0] / 2, (dims[1] + 1) * dims[0] / 2 , dims[1] * dims[0] / 2, 0};
     uInt32 *ptrData = doubleBuffer;
     for (long indexn = 0; indexn < dims[2]; indexn++) {
       for (long indexx = 0; indexx < dims[0] / 2; indexx++) {
