@@ -1,0 +1,218 @@
+{
+  "version": "0.9.5",
+  "archived_on": "2026-10-22",
+  "origin": "spydr_camicaz_0.9.5_test",
+  "archive": "spydr_camicaz_0.9.5_test.zip",
+  "files": [
+    {
+      "bundle_path": "libcamicaz/include/camicaz.h",
+      "git_path": "PC TP IR/TP_Master_version/libcamicaz/include/camicaz.h",
+      "sha256": "04e21b652ceb4d3851f5f1351955a77c7f06cc6556017d3d40d5258b89253fe5"
+    },
+    {
+      "bundle_path": "libcamicaz/include/TimeoutSerial.h",
+      "git_path": "PC TP IR/TP_Master_version/libcamicaz/include/TimeoutSerial.h",
+      "sha256": "5bb2d2ef7aba48a6ec13074fcb0ffd35e434b7482589f8036b253fa6b2fc9802"
+    },
+    {
+      "bundle_path": "libcamicaz/Makefile",
+      "git_path": "PC TP IR/TP_Master_version/libcamicaz/Makefile",
+      "sha256": "9b12548c43d1ca620fb7946d37a49c4e22070ae466f329fa7962fa546ac1cde2"
+    },
+    {
+      "bundle_path": "libcamicaz/src/camicaz.cpp",
+      "git_path": "PC TP IR/TP_Master_version/libcamicaz/src/camicaz.cpp",
+      "sha256": "ac032ff0ef3eea3ec8f4b8b1ffd091dacdd3956c4aeb6b02bfd0583e7a6d5ea5"
+    },
+    {
+      "bundle_path": "libcamicaz/src/TimeoutSerial.cpp",
+      "git_path": "PC TP IR/TP_Master_version/libcamicaz/src/TimeoutSerial.cpp",
+      "sha256": "b1b739710b130657a95f4ac78344301594ef56ba6ac270be92bfdd42b20b34dc"
+    },
+    {
+      "bundle_path": "README_SYSTEM_YORICK.md",
+      "git_path": "docs/releases/v0.9.5/README_SYSTEM_YORICK.md",
+      "sha256": "126c305bc603841222bc6b1afd16aed3245cc49cdb843c0db3cd883f3aaba275"
+    },
+    {
+      "bundle_path": "rebuild_with_existing_yorick.sh",
+      "git_path": "tools/spydr-system-yorick/rebuild_with_existing_yorick.sh",
+      "sha256": "54f31791ddafad6062d191febe857700d4532fb3715fc61fcd5e2d963f205718"
+    },
+    {
+      "bundle_path": "run_spydr_test.sh",
+      "git_path": "tools/spydr-system-yorick/run_spydr_test.sh",
+      "sha256": "1da7863ee9ab8ee75546014bb264859eb3c610264671afdf3cd1239c882e2536"
+    },
+    {
+      "bundle_path": "yCamicaz/.project",
+      "git_path": "PC TP IR/TP_Master_version/yCamicaz/.project",
+      "sha256": "5e60932332c62a107c569c50ec72af19a775acf855cb6cb43260c9e60d510677"
+    },
+    {
+      "bundle_path": "yCamicaz/camicaz.ini",
+      "git_path": "PC TP IR/TP_Master_version/yCamicaz/camicaz.ini",
+      "sha256": "20ef9e556c1cfbaa3587931236557ea8d29f361bf645db72f692e3d83f7e1b6c"
+    },
+    {
+      "bundle_path": "yCamicaz/glade/widget_camicaz.glade",
+      "git_path": "PC TP IR/TP_Master_version/yCamicaz/glade/widget_camicaz.glade",
+      "sha256": "d03d8c6b4ea5e3ca838aa83c51a48674038563106f5499600f21682141555dc1"
+    },
+    {
+      "bundle_path": "yCamicaz/Makefile",
+      "git_path": "PC TP IR/TP_Master_version/yCamicaz/Makefile",
+      "sha256": "9ff06f66eabc062a44175070a1c94e60c7797acc893baba7ce738bf010972cf6"
+    },
+    {
+      "bundle_path": "yCamicaz/widgets/widget_camicaz.py",
+      "git_path": "PC TP IR/TP_Master_version/yCamicaz/widgets/widget_camicaz.py",
+      "sha256": "2ec9b8d2ccf82789b4b3a928b0b0a4f8ece9eb38fde91fe6f4cf89041512883d"
+    },
+    {
+      "bundle_path": "yCamicaz/yCamicaz.cpp",
+      "git_path": "PC TP IR/TP_Master_version/yCamicaz/yCamicaz.cpp",
+      "sha256": "14f439a94ab71b69277ab96830847812b078aedd5512e5f355dfc3977853c4f1"
+    },
+    {
+      "bundle_path": "yCamicaz/yorick/check.i",
+      "git_path": "PC TP IR/TP_Master_version/yCamicaz/yorick/check.i",
+      "sha256": "86cbc13af93c5a5a98f32b45d4729ad2b48353b3a4efb977770bb5e973eefcd5"
+    },
+    {
+      "bundle_path": "yCamicaz/yorick/spydr/changelog",
+      "git_path": "PC TP IR/TP_Master_version/yCamicaz/yorick/spydr/changelog",
+      "sha256": "acfd12bc643af241f2ab773ab32b821e6ec59d7193610349c4284f1045827c6a"
+    },
+    {
+      "bundle_path": "yCamicaz/yorick/spydr/LICENSE",
+      "git_path": "PC TP IR/TP_Master_version/yCamicaz/yorick/spydr/LICENSE",
+      "sha256": "8ceb4b9ee5adedde47b31e975c1d90c73ad27b6b165a1dcd80c7c545eb65b903"
+    },
+    {
+      "bundle_path": "yCamicaz/yorick/spydr/Makefile",
+      "git_path": "PC TP IR/TP_Master_version/yCamicaz/yorick/spydr/Makefile",
+      "sha256": "6008bcd6071df96cff4ae0908a2a1b797a9d38cb42ed544c8999fdd3ce085115"
+    },
+    {
+      "bundle_path": "yCamicaz/yorick/spydr/README",
+      "git_path": "PC TP IR/TP_Master_version/yCamicaz/yorick/spydr/README",
+      "sha256": "a5cfec4920e7edd2996eab455423fc219b0c4247365c7c68ef71ff646f16e531"
+    },
+    {
+      "bundle_path": "yCamicaz/yorick/spydr/spydr",
+      "git_path": "PC TP IR/TP_Master_version/yCamicaz/yorick/spydr/spydr",
+      "sha256": "5f1d2bc41008fc30fe63590ae32aabdbbf9b6f7a536db1ebf7547cc761bbebe5"
+    },
+    {
+      "bundle_path": "yCamicaz/yorick/spydr/spydr.1",
+      "git_path": "PC TP IR/TP_Master_version/yCamicaz/yorick/spydr/spydr.1",
+      "sha256": "ef658b20eb9d6ade1873eb03bdb6781238618f2ec5afb7d11aad1a161f79aa19"
+    },
+    {
+      "bundle_path": "yCamicaz/yorick/spydr/spydr.conf",
+      "git_path": "PC TP IR/TP_Master_version/yCamicaz/yorick/spydr/spydr.conf",
+      "sha256": "9b6f41155df2f20cf03ea7ea486f2ee429a9c6318d06ed73215af25198641da1"
+    },
+    {
+      "bundle_path": "yCamicaz/yorick/spydr/spydr.glade",
+      "git_path": "PC TP IR/TP_Master_version/yCamicaz/yorick/spydr/spydr.glade",
+      "sha256": "fb614e5c7f66ae4ea72735c008c6437190a81ad50430ad5e2c5895a9b7171ae5"
+    },
+    {
+      "bundle_path": "yCamicaz/yorick/spydr/spydr.gs",
+      "git_path": "PC TP IR/TP_Master_version/yCamicaz/yorick/spydr/spydr.gs",
+      "sha256": "3cad5f079706b06e0a0db7cc46312fb0cd47433fc62920acfc6330d85802f6e8"
+    },
+    {
+      "bundle_path": "yCamicaz/yorick/spydr/spydr.i",
+      "git_path": "PC TP IR/TP_Master_version/yCamicaz/yorick/spydr/spydr.i",
+      "sha256": "2543e72af215ac8037d53b89fd2be42dc89065e56cad324d66619996d2b36a7d"
+    },
+    {
+      "bundle_path": "yCamicaz/yorick/spydr/spydr.info",
+      "git_path": "PC TP IR/TP_Master_version/yCamicaz/yorick/spydr/spydr.info",
+      "sha256": "c8d6699472549fc7462958971d180e753ff3fbe9538e6331957246475386a36e"
+    },
+    {
+      "bundle_path": "yCamicaz/yorick/spydr/spydr.py",
+      "git_path": "PC TP IR/TP_Master_version/yCamicaz/yorick/spydr/spydr.py",
+      "sha256": "eb8a63048ef55547d5dcbb36b11db75a6af2d4c15d2f3fc2f0f920d6fef62c89"
+    },
+    {
+      "bundle_path": "yCamicaz/yorick/spydr/spydr.xpm",
+      "git_path": "PC TP IR/TP_Master_version/yCamicaz/yorick/spydr/spydr.xpm",
+      "sha256": "55490e4408308d860dfc538c89a181406b2f82404aaa426ce4c25e54e9aeafc4"
+    },
+    {
+      "bundle_path": "yCamicaz/yorick/spydr/spydr2.gs",
+      "git_path": "PC TP IR/TP_Master_version/yCamicaz/yorick/spydr/spydr2.gs",
+      "sha256": "d2cdab6d33c1bee1a44dcc3d5b2545e5ba0b0b47808cd4c7000d3dc64c577183"
+    },
+    {
+      "bundle_path": "yCamicaz/yorick/spydr/spydr_fitsutils.i",
+      "git_path": "PC TP IR/TP_Master_version/yCamicaz/yorick/spydr/spydr_fitsutils.i",
+      "sha256": "18385afd04d9265bf1fe1ea8472a276bdfd85f555ec0eca3aa58a56f877b22d7"
+    },
+    {
+      "bundle_path": "yCamicaz/yorick/spydr/spydr_input_data_format.i",
+      "git_path": "PC TP IR/TP_Master_version/yCamicaz/yorick/spydr/spydr_input_data_format.i",
+      "sha256": "ec43a1542e677de1489ef2507daba439c309f329307f419c401f4ce0f3d40f94"
+    },
+    {
+      "bundle_path": "yCamicaz/yorick/spydr/spydr_plugins.i",
+      "git_path": "PC TP IR/TP_Master_version/yCamicaz/yorick/spydr/spydr_plugins.i",
+      "sha256": "3ccb274a276413560a3be7cd72434d6c720675296698214ba594f633079e8c5c"
+    },
+    {
+      "bundle_path": "yCamicaz/yorick/spydr/spydr_psffit.i",
+      "git_path": "PC TP IR/TP_Master_version/yCamicaz/yorick/spydr/spydr_psffit.i",
+      "sha256": "19e69921cc8532ad6c47d7c163cde74d0f8187ca121330ec6ebc8e3c79c7c9be"
+    },
+    {
+      "bundle_path": "yCamicaz/yorick/spydr/spydr_pyk.i",
+      "git_path": "PC TP IR/TP_Master_version/yCamicaz/yorick/spydr/spydr_pyk.i",
+      "sha256": "0e466e7c3c499c2441e6e61e5780d060531dea1ba6a2d55328996de7055ef480"
+    },
+    {
+      "bundle_path": "yCamicaz/yorick/spydr/spydr_start.i",
+      "git_path": "PC TP IR/TP_Master_version/yCamicaz/yorick/spydr/spydr_start.i",
+      "sha256": "ca98a38db744afa63d4d15eedaefbf1a641d19273cab0d5aa797b1054cded4bc"
+    },
+    {
+      "bundle_path": "yCamicaz/yorick/spydr/spydr_various.i",
+      "git_path": "PC TP IR/TP_Master_version/yCamicaz/yorick/spydr/spydr_various.i",
+      "sha256": "d7280dcdc15cda45ffc154e2f839fc38ebab9919009592a44623065bbd066e49"
+    },
+    {
+      "bundle_path": "yCamicaz/yorick/spydr/spydr_widgetcam.i",
+      "git_path": "PC TP IR/TP_Master_version/yCamicaz/yorick/spydr/spydr_widgetcam.i",
+      "sha256": "69678bafd80841f599cdc4aea6e65c5057b00c5ada82f7ebe9c7728058b926db"
+    },
+    {
+      "bundle_path": "yCamicaz/yorick/spydr/VERSION",
+      "git_path": "PC TP IR/TP_Master_version/yCamicaz/yorick/spydr/VERSION",
+      "sha256": "8780409dbc52c96276102c5a079a7d3e325510d7bf87af5257508ecc088a3730"
+    },
+    {
+      "bundle_path": "yCamicaz/yorick/spydr/yorick-spydr.spec",
+      "git_path": "PC TP IR/TP_Master_version/yCamicaz/yorick/spydr/yorick-spydr.spec",
+      "sha256": "0722dcfbb2ce62ac000b878c4d3410a07668c0601dafc43abb4eaf9f646b4a1c"
+    },
+    {
+      "bundle_path": "yCamicaz/yorick/styc_utils.i",
+      "git_path": "PC TP IR/TP_Master_version/yCamicaz/yorick/styc_utils.i",
+      "sha256": "a9cff0110a13acb0843f52ba8b9b8921f896bed0cd870997f77438ffdb63a5c6"
+    },
+    {
+      "bundle_path": "yCamicaz/yorick/widget_camicaz.i",
+      "git_path": "PC TP IR/TP_Master_version/yCamicaz/yorick/widget_camicaz.i",
+      "sha256": "27454f33e5057956cb479e15aebe2fd1f4a638fecc6c6a7300b76b7270167ac7"
+    },
+    {
+      "bundle_path": "yCamicaz/yorick/yCamicaz.i",
+      "git_path": "PC TP IR/TP_Master_version/yCamicaz/yorick/yCamicaz.i",
+      "sha256": "54b03793cd5355456a19b07c0083aa2e6fdb342050daa5765fa88e6f045b388e"
+    }
+  ]
+}

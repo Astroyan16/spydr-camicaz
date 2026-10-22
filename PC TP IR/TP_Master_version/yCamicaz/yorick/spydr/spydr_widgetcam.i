@@ -275,6 +275,7 @@ func cam_chop_pattern(seqid)
   if (seqid == 2) return [0,0,1,1];
   if (seqid == 3) return [0,0,0,0,0,1,1,1,1,1];
   if (seqid == 4) return [0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1];
+  if (seqid == 5) return [0,1,1,0,1,0,0,1,1,0,0,1,0,1,1,0];
   error,"Unknown chopping sequence";
 }
 
