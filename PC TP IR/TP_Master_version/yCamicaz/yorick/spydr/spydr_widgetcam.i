@@ -266,14 +266,30 @@ func create_cam_filename(&filename,ntype,obj,nim,filter,texp,lat)
   //spydr_pyk,swrite(format=cmd_cam+"save_cam_data('%s')",filename);
 }
 
+func cam_chop_pattern(seqid)
+{
+  // Logical A=0 (DTR off), B=1 (DTR on), as in the original ABAB mode.
+  if (seqid == -1) return [];
+  if (seqid == 0) return [0,1];
+  if (seqid == 1) return [0,1,1,0];
+  if (seqid == 2) return [0,0,1,1];
+  if (seqid == 3) return [0,0,0,0,0,1,1,1,1,1];
+  if (seqid == 4) return [0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1];
+  error,"Unknown chopping sequence";
+}
+
 func record_image(typed,objectd,nb_images,fold,seqid,exp,lat,filt)
 {
   extern cam_filename;
   extern cam_buffer;
   extern cam_freerun;
   extern cam_seqid,cam_seqind,cam_nimseq;
+  extern cam_seqpattern;
   extern stop_record;
   
+  pattern = cam_chop_pattern(seqid);
+  if (nb_images < 1 || nb_images != long(nb_images))
+    error,"Sequence count must be a positive integer";
   cam_stop_freerun;
 
   create_cam_filename,filename,typed,objectd,nb_images,filt,exp,lat;
@@ -282,10 +298,9 @@ func record_image(typed,objectd,nb_images,fold,seqid,exp,lat,filt)
   cam_buffer = -cam_get_image(cam_handle)(,,,-:1:1);
 
   cam_seqid = seqid;
-  if (seqid < 0)  cam_nimseq = nb_images;
-  if (seqid == 0) cam_nimseq = 2 * nb_images;
-  if (seqid == 1) cam_nimseq = 4 * nb_images;
-  if (seqid == 2) cam_nimseq = 10 * nb_images;
+  // Snapshot the mode for this recording; later GUI changes affect the next one.
+  cam_seqpattern = pattern;
+  cam_nimseq = nb_images * max(1,numberof(pattern));
 
   cam_seqind = stop_record = 0;
   
@@ -301,41 +316,19 @@ func add_image
     camdata_save;
     return;
   }
-  if (cam_seqid < 0)
-    grow,cam_buffer,-cam_get_next_image(cam_handle);
-  
-  if (cam_seqid == 0) {
-    cam_chopping,cam_handle,(cam_seqind % 2);
+  if (numberof(cam_seqpattern)) {
+    phase = cam_seqind % numberof(cam_seqpattern) + 1;
+    position = cam_seqpattern(phase);
+    // Always impose the first position, even after a freerun ending on B.
+    if (cam_seqind == 0) cam_chopping,cam_handle,position;
+    else {
+      previous = (cam_seqind-1) % numberof(cam_seqpattern) + 1;
+      if (position != cam_seqpattern(previous)) cam_chopping,cam_handle,position;
+    }
+    // Keep the existing settling delay before requesting the next exposure.
     pause,500;
-    grow,cam_buffer,-cam_get_next_image(cam_handle);
   }
-  
-  if (cam_seqid == 1) {
-    if (cam_seqind % 4 == 1)
-      cam_chopping,cam_handle,0;
-    if (cam_seqind % 4 == 3)
-      cam_chopping,cam_handle,1;
-    pause,500;
-    grow,cam_buffer,-cam_get_next_image(cam_handle);
-  }
-
-  if (cam_seqid == 2) {
-    if (cam_seqind % 4 == 2)
-      cam_chopping,cam_handle,0;
-    if (cam_seqind % 4 == 0)
-      cam_chopping,cam_handle,1;
-    pause,500;
-    grow,cam_buffer,-cam_get_next_image(cam_handle);
-  }
-
-  if (cam_seqid == 3) {
-    if (cam_seqind % 10 == 5)
-      cam_chopping,cam_handle,0;
-    if (cam_seqind % 4 == 0)
-      cam_chopping,cam_handle,1;
-    pause,500;
-    grow,cam_buffer,-cam_get_next_image(cam_handle);
-  }
+  grow,cam_buffer,-cam_get_next_image(cam_handle);
 
   cam_seqind += 1;
 
