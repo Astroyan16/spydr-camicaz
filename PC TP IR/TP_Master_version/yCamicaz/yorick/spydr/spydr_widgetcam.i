@@ -104,6 +104,12 @@ func cam_start_freerun(run,chop){
   }
   if (cam_freerun) return;
   after,-,freerun_loop;
+  // A recorded cube may leave stale axis limits; live restarts keep user zoom.
+  if (numberof(dimsof(cam_buffer))==5) {
+    window,spydr_wins(1);
+    unzoom;
+    limits;
+  }
   cam_freerun = 1;
   if (chop) cam_freechop = 1;
   else cam_freechop = -1;
