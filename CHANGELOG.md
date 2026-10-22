@@ -1,25 +1,11 @@
 # Historique Spydr / Camicaz
 
 Les [versions archivees sur GitHub](docs/VERSIONS.md) comprennent la reference
-historique 0.8.3 et les livraisons 0.9.0 a 0.9.8b, avec tags et archives.
+historique 0.8.3 et les livraisons 0.9.0 a 0.9.7, avec tags et archives.
 Leur publication retrospective date du 22 octobre 2026.
 
-## 0.9.8b - 2026-10-21 (test)
-
-- Horloges natives UTC et monotone, FRAMELOG de douze colonnes (METAVER=2).
-- Conservation des metadonnees, corrections Record, Apply and Record et
-  AutoStatus pendant le freerun, avec report pendant Record.
-- Nouvelle icone des fenetres et logo dans A propos.
-- Reconstruction du module natif obligatoire pour cette version.
-
-## 0.9.8 - 2026-10-21 (test)
-
-- Metadonnees FITS : objet, observateur, commentaires, focale et sondes.
-- Horodatage logiciel a la seconde et FRAMELOG de trois colonnes (METAVER=1).
-- Fenetre redimensionnable, corrections de cadrage et reglage de focale.
-- Corrections cumulatives du blocage Record et confirmation Apply and Record.
-- AutoStatus au lancement puis toutes les minutes, y compris en freerun,
-  avec report pendant Record ; nouvelles icones de fenetre et A propos.
+Les essais locaux 0.9.8 et 0.9.8b sont signales non fonctionnels et ne sont
+pas publies comme releases. L'archivage des livraisons s'arrete a la 0.9.7.
 
 ## 0.9.7 - 2026-10-16 (test)
 

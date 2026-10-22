@@ -17,8 +17,6 @@ archive ZIP et d'une empreinte SHA-256.
 | 0.9.5 | [Tag v0.9.5](https://github.com/Astroyan16/spydr-camicaz/tree/v0.9.5) | [Release](https://github.com/Astroyan16/spydr-camicaz/releases/tag/v0.9.5) | Ajout du motif ABBABAABBAABABBA. |
 | 0.9.6 | [Tag v0.9.6](https://github.com/Astroyan16/spydr-camicaz/tree/v0.9.6) | [Release](https://github.com/Astroyan16/spydr-camicaz/releases/tag/v0.9.6) | Sauvegardes sans ecrasement, erreurs et acquisitions partielles. |
 | 0.9.7 | [Tag v0.9.7](https://github.com/Astroyan16/spydr-camicaz/tree/v0.9.7) | [Release](https://github.com/Astroyan16/spydr-camicaz/releases/tag/v0.9.7) | Correction de reconstruction des quadrants. |
-| 0.9.8 | [Tag v0.9.8](https://github.com/Astroyan16/spydr-camicaz/tree/v0.9.8) | [Release](https://github.com/Astroyan16/spydr-camicaz/releases/tag/v0.9.8) | Metadonnees FITS METAVER=1, focale, Record, AutoStatus et icones. |
-| 0.9.8b | [Tag v0.9.8b](https://github.com/Astroyan16/spydr-camicaz/tree/v0.9.8b) | [Release](https://github.com/Astroyan16/spydr-camicaz/releases/tag/v0.9.8b) | Horloges natives et FITS METAVER=2, Record, AutoStatus et icones. |
 
 ## Provenance
 
@@ -39,13 +37,13 @@ des fichiers. Les sources de `libcamicaz` et `yCamicaz` sont situees sous
 `PC TP IR/TP_Master_version/` ; les scripts de lancement et de reconstruction
 sont sous `tools/spydr-system-yorick/`.
 
-Les 0.9.8 et 0.9.8b sont issues des dossiers `*_fits_test_icones` : elles incluent
-les corrections cumulatives Record, Apply and Record, AutoStatus pendant le
-freerun, et les nouvelles icones. Les differences METAVER=1 / METAVER=2 et les
-horloges natives de la 0.9.8b sont preservees.
+La publication s'arrete a la **0.9.7**. Les essais locaux 0.9.8 et 0.9.8b
+ont ete signales non fonctionnels par l'utilisateur le 22 octobre 2026 :
+ils ne sont pas proposes comme releases et n'ont pas de tags publies.
+Les fichiers locaux sont conserves pour un diagnostic ulterieur.
 
 Les essais intermediaires non numerotes (focale, disposition, redimensionnement)
-et les correctifs seuls n'ont pas de release distincte. Les versions numerotees
+et les correctifs seuls n'ont pas de release distincte. Les versions publiees
 representent les jalons principaux ; les corrections presentes dans chaque
 instantane sont conservees, sans pretendre reconstituer un etat anterieur perdu.
 
