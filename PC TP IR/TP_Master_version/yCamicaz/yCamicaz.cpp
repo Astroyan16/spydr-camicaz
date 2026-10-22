@@ -101,7 +101,8 @@ void Y_yCamicaz_get_image(int argc) {
   //int *data = (int *)ypush_i(dims);
   long *data = (long *) ypush_l(dims);
 
-  camera->getLastImage(data);
+  if (camera->getLastImage(data) < 0)
+    y_error("Camera image acquisition failed");
 }
 
 void Y_yCamicaz_get_next_image(int argc) {
@@ -118,7 +119,8 @@ void Y_yCamicaz_get_next_image(int argc) {
   //int *data = (int *)ypush_i(dims);
   long *data = (long *) ypush_l(dims);
 
-  camera->getNextImage(data);
+  if (camera->getNextImage(data) < 0)
+    y_error("Camera image acquisition failed");
 }
 
 void Y_yCamicaz_get_cube(int argc) {
@@ -136,8 +138,10 @@ void Y_yCamicaz_get_cube(int argc) {
 
   long *data = (long *) ypush_l(dims);
 
-  for (int i = 0; i < nbFrames; i++)
-    camera->getLastImage((long *) (data + i * camera->getSize()));
+  for (int i = 0; i < nbFrames; i++) {
+    if (camera->getLastImage((long *) (data + i * camera->getSize())) < 0)
+      y_error("Camera cube acquisition failed");
+  }
 
 }
 
@@ -156,6 +160,7 @@ void Y_yCamicaz_set_chopping(int argc) {
 
   Camicaz *camera = (Camicaz *) (handle->camera);
   int ret = camera->setChopping(chopping);
+  if (ret < 0) y_error("Chopping command failed");
   ypush_int(ret);
 }
 
@@ -210,6 +215,7 @@ void Y_yCamicaz_set_param(int argc) {
 
   Camicaz *camera = (Camicaz *) (handle->camera);
   int ret = camera->setParam(expo, latency, filter);
+  if (ret < 0) y_error("Camera parameter update failed");
   ypush_long(ret);
 }
 

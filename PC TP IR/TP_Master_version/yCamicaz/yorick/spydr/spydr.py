@@ -1184,7 +1184,8 @@ class spydr:
       active = wdg.get_active();
       if active:
          self.glade.get_widget('chopbox').set_sensitive(1)
-         self.glade.get_widget('comboseq').set_active(0)
+         if self.glade.get_widget('comboseq').get_active() < 0:
+            self.glade.get_widget('comboseq').set_active(0)
       else:
          self.glade.get_widget('chopbox').set_sensitive(0)
       if self.glade.get_widget('freerun').get_active():
@@ -1219,7 +1220,6 @@ class spydr:
       self.py2yo('record_image %d "%s" %d "%s" %d %d %d %d' % (typed,objectd,nb_images,fold,seqid,exp,lat,filt))
 
    def on_button_stop_clicked(self,wdg,*args):
-      self.glade.get_widget('record').set_sensitive(1)
       self.py2yo('abort_record')
 
    def on_homing_clicked(self,wdg,*args):

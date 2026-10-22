@@ -2956,6 +2956,8 @@ func spydr_ready_func(void)
 cam_nim           = 0;
 cam_name          = "";
 cam_freerun       = 0;
+cam_recording     = 0;
+cam_applied_params = [];
 cam_current_ndisp = 0;
 cam_current_bckg  = 0;
 cam_monitor       = 0;
