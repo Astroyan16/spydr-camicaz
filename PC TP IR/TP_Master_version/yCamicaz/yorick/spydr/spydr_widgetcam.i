@@ -94,6 +94,15 @@ func cam_stop_freerun(void)
   after,-,freerun_loop;
 }
 
+func cam_set_freerun_chopping(enabled)
+{
+  extern cam_freechop;
+  if (!cam_freerun) return;
+  // Apply between frames, without restarting acquisition or resetting the phase.
+  if (!enabled) cam_freechop = -1;
+  else if (cam_freechop < 0) cam_freechop = 1;
+}
+
 func cam_start_freerun(run,chop){
   extern cam_freerun;
   extern cam_freechop;

@@ -1187,6 +1187,8 @@ class spydr:
          self.glade.get_widget('comboseq').set_active(0)
       else:
          self.glade.get_widget('chopbox').set_sensitive(0)
+      if self.glade.get_widget('freerun').get_active():
+         self.py2yo('cam_set_freerun_chopping %d' % active)
 
    def on_record_clicked(self,wdg,*args):
       if self.glade.get_widget('freerun').get_active():
