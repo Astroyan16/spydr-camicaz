@@ -79,3 +79,13 @@ Le manifeste indique aussi le commit source exact du tag.
 
 Documentation : [schema FITS](FITS_METADATA.md), [confirmation Record](APPLY_AND_RECORD.md),
 [Status automatique](AUTO_STATUS.md), [etat final Record](RECORD_PROGRESS.md).
+
+
+## Revision d'empaquetage r2
+
+Les archives r2 allegees gardent exactement les sources et les deux scripts
+du tag v0.9.8b. Leur racine contient un guide README.md unique ; le schema
+FITS et les informations de verification sont ranges dans docs/.
+Les notes de correctifs et l'historique restent dans le depot. Le manifeste
+distingue le commit du logiciel et celui de la documentation. Le tag de la
+release n'est pas deplace et les fichiers d'acquisition ne sont pas modifies.
