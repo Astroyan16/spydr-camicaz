@@ -13,12 +13,15 @@ parser=argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--ref',required=True,help='Existing local tag or commit')
 parser.add_argument('--output',type=Path,required=True,help='New output directory')
 parser.add_argument('--docs-ref',help='Documentation revision (default HEAD); runtime files always come from --ref')
+parser.add_argument('--launchers-ref',help='Launcher revision (default --ref); acquisition sources stay pinned')
+parser.add_argument('--launcher-validation-report',type=Path)
 parser.add_argument('--revision',default='',help='Packaging suffix, e.g. r2; does not change the software version')
 parser.add_argument('--validation-report',type=Path)
 args=parser.parse_args()
 def git(*cmd):return subprocess.check_output(['git',*cmd],cwd=ROOT)
 commit=git('rev-parse',args.ref+'^{commit}').decode().strip()
 docs_commit=git('rev-parse',(args.docs_ref or 'HEAD')+'^{commit}').decode().strip()
+launchers_commit=git('rev-parse',(args.launchers_ref or args.ref)+'^{commit}').decode().strip()
 if args.revision and not args.revision.isalnum():raise ValueError('Invalid packaging revision')
 prefix='PC TP IR/TP_Master_version/'
 version=git('show',commit+':'+prefix+'yCamicaz/yorick/spydr/VERSION').decode().strip()
@@ -27,7 +30,7 @@ out=args.output.resolve()
 out.mkdir(parents=True,exist_ok=False)
 name='spydr_camicaz_'+version+'_release'+('-'+args.revision if args.revision else '')
 bundle=out/name;bundle.mkdir()
-paths=[prefix+'libcamicaz',prefix+'yCamicaz','tools/spydr-system-yorick']
+paths=[prefix+'libcamicaz',prefix+'yCamicaz']
 raw=git('archive','--format=zip',commit,'--',*paths)
 items={};manifest=[]
 with zipfile.ZipFile(io.BytesIO(raw)) as z:
@@ -35,8 +38,6 @@ with zipfile.ZipFile(io.BytesIO(raw)) as z:
   if item.is_dir():continue
   path=PurePosixPath(item.filename)
   if item.filename.startswith(prefix):dest=item.filename[len(prefix):]
-  elif item.filename in ('tools/spydr-system-yorick/run_spydr_test.sh',
-                         'tools/spydr-system-yorick/rebuild_with_existing_yorick.sh'):dest=path.name
   else:continue
   if any(part in ('.git','.svn','__pycache__','obj') for part in path.parts):raise ValueError('Unexpected metadata/build directory')
   if path.suffix.lower() in ('.so','.o','.obj','.pyc','.dll','.exe','.log'):raise ValueError('Unexpected binary or runtime file')
@@ -44,6 +45,11 @@ with zipfile.ZipFile(io.BytesIO(raw)) as z:
   data=z.read(item)
   items[dest]=data
   manifest.append(dict(path=dest,git_path=item.filename,git_commit=commit,sha256=hashlib.sha256(data).hexdigest()))
+for name in ('run_spydr_test.sh','rebuild_with_existing_yorick.sh'):
+ source='tools/spydr-system-yorick/'+name
+ data=git('show',launchers_commit+':'+source)
+ items[name]=data
+ manifest.append(dict(path=name,git_path=source,git_commit=launchers_commit,sha256=hashlib.sha256(data).hexdigest()))
 # Keep the delivered guide small; historical fix notes stay in the repository.
 for source,dest in (('README_RELEASE.md','README.md'),('docs/FITS_METADATA.md','docs/FITS_METADATA.md')):
  data=git('show',docs_commit+':'+source)
@@ -55,7 +61,11 @@ if args.validation_report:
  checks=json.loads(args.validation_report.read_text())
  assert checks and all(r['passed'] for r in checks)
  items['docs/verification/VALIDATION.json']=(json.dumps(dict(source_commit=commit,checks=checks),indent=2)+'\n').encode()
-items['docs/verification/MANIFEST.json']=(json.dumps(dict(version=version,source_commit=commit,documentation_commit=docs_commit,packaging_revision=args.revision or 'initial',files=manifest),indent=2)+'\n').encode()
+if args.launcher_validation_report:
+ checks=json.loads(args.launcher_validation_report.read_text())
+ assert checks and checks['passed']
+ items['docs/verification/LAUNCHER_CHECKS.json']=(json.dumps(dict(launcher_commit=launchers_commit,checks=checks),indent=2)+'\n').encode()
+items['docs/verification/MANIFEST.json']=(json.dumps(dict(version=version,source_commit=commit,documentation_commit=docs_commit,launcher_commit=launchers_commit,packaging_revision=args.revision or 'initial',files=manifest),indent=2)+'\n').encode()
 for dest,data in items.items():
  target=bundle/dest
  assert target.resolve().is_relative_to(bundle.resolve())

@@ -36,12 +36,12 @@ if [ ! -f "$YORICK_ROOT/Make.cfg" ]; then
 fi
 
 if ! command -v make >/dev/null 2>&1; then
-  echo "make is required on the test machine." >&2
+  echo "make is required on the instrument machine." >&2
   exit 1
 fi
 
 if ! command -v g++ >/dev/null 2>&1; then
-  echo "g++ is required on the test machine." >&2
+  echo "g++ is required on the instrument machine." >&2
   exit 1
 fi
 
@@ -49,15 +49,20 @@ echo "Using existing Yorick:"
 echo "  bin  : $YORICK_BIN"
 echo "  root : $YORICK_ROOT"
 echo
-echo "This rebuild stays inside the copied test folder."
+echo "This rebuild stays inside the isolated application folder."
 echo "No file from the existing stable Yorick / Spydr installation is modified."
 echo
 
-echo "Rebuilding libcamicaz in the test bundle..."
+echo "Rebuilding libcamicaz in the isolated application folder..."
 make -C "$LIB_DIR" clean
 make -C "$LIB_DIR" CC=g++
 
-echo "Rebuilding yCamicaz in the test bundle..."
+if [ ! -s "$LIB_DIR/libcamicaz.so" ]; then
+  echo "Build failed: libcamicaz.so is missing or empty." >&2
+  exit 1
+fi
+
+echo "Rebuilding yCamicaz in the isolated application folder..."
 make -C "$YCAM_DIR" clean \
   Y_MAKEDIR="$YORICK_ROOT" \
   Y_EXE="$YORICK_BIN" \
@@ -72,8 +77,13 @@ make -C "$YCAM_DIR" CC=g++ TGT=dll \
   Y_EXE_SITE="$YORICK_ROOT" \
   LIB_CAMICAZ_DIR="$LIB_DIR"
 
+if [ ! -s "$YCAM_DIR/yCamicaz.so" ]; then
+  echo "Build failed: yCamicaz.so is missing or empty." >&2
+  exit 1
+fi
+
 echo
-echo "Test bundle rebuilt successfully:"
+echo "Application libraries rebuilt successfully:"
 echo "  $LIB_DIR/libcamicaz.so"
 echo "  $YCAM_DIR/yCamicaz.so"
 echo

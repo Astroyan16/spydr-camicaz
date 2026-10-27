@@ -89,3 +89,19 @@ FITS et les informations de verification sont ranges dans docs/.
 Les notes de correctifs et l'historique restent dans le depot. Le manifeste
 distingue le commit du logiciel et celui de la documentation. Le tag de la
 release n'est pas deplace et les fichiers d'acquisition ne sont pas modifies.
+
+
+## Revision d'empaquetage r3
+
+Les deux lanceurs verifient desormais que libcamicaz.so et yCamicaz.so sont
+non vides : avant le demarrage, et apres chaque etape de compilation.
+Un echec de make interrompt la reconstruction sans message de succes.
+Cela rend explicite une compilation incomplete ; le controle ne remplace
+pas la verification du chargement ELF et de ses dependances par Yorick.
+
+Les 46 fichiers d'acquisition restent identiques au tag v0.9.8b.
+Seuls les deux scripts et le guide sont actualises. Le manifeste indique
+separement les commits d'acquisition, de lanceurs et de documentation.
+Le test check_launchers.py couvre les sorties absentes ou vides, l'echec du
+compilateur et les chemins de succes avec des executables simules dans un
+dossier temporaire. Aucun pilote ni environnement installe n'est modifie.

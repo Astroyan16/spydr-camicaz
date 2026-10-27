@@ -41,14 +41,15 @@ Les fichiers LabVIEW `.vi` sont egalement exclus du perimetre actuel.
 Depuis un tag local existant, sans modifier la copie de travail :
 
 ```sh
-python tools/build-spydr-release.py --ref v0.9.8b --docs-ref HEAD --revision r2 --output dist/rebuild_0.9.8b_r2
+python tools/build-spydr-release.py --ref v0.9.8b --docs-ref HEAD --launchers-ref HEAD --revision r3 --output dist/rebuild_0.9.8b_r3
 ```
 
 Le dossier de sortie doit etre nouveau. Le script prend les sources exactes
 avec `git archive`, produit un ZIP et un tar.gz avec manifeste et SHA-256,
-et verifie que leur contenu correspond aux blobs Git du commit indique. Les fichiers
-du logiciel proviennent exclusivement de `--ref`. La documentation vient de
-`--docs-ref` (HEAD par defaut) ; les deux commits sont inscrits au manifeste.
+et verifie que leur contenu correspond aux blobs Git du commit indique. Les sources
+d'acquisition proviennent exclusivement de `--ref`. Les deux scripts de lancement
+et de reconstruction peuvent etre pris dans `--launchers-ref` (par defaut `--ref`). La documentation vient de
+`--docs-ref` (HEAD par defaut) ; les commits d'acquisition, des lanceurs et de documentation sont inscrits au manifeste.
 L'archive contient seulement un guide `README.md`, le schema dans `docs/`,
 et les informations de verification dans `docs/verification/`. Les notes de
 correctifs et l'historique detaille restent dans le depot.

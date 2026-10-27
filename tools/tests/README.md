@@ -220,3 +220,12 @@ reset and failure states. `check_chopping_sequences.py` additionally verifies
 that green success follows a successful full save, partial Stop stays distinct,
 disk failures remain errors and a completed cube can succeed after save retry.
 The GTK2 rendering is also inspected; instrument UI validation remains required.
+
+
+## Launcher and build preflight
+
+Run `python3 tools/tests/check_launchers.py` on Linux/WSL. Optional `--bundle PATH`
+checks the delivered scripts. Four tests exercise missing/empty shared libraries,
+compiler failure, absence of premature launch/success and valid build outputs
+using disposable make/Yorick fixtures. Optional `--report PATH` saves a JSON report.
+No camera, NI driver or installed Yorick is invoked or modified.

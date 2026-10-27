@@ -17,6 +17,11 @@ La compilation reste dans le dossier extrait. Elle demande Yorick et ses
 en-tetes, NI-DAQmx, Boost, make, g++ et Python 2/PyGTK. Aucun pilote ou binaire
 camera compile n'est fourni. La version historique et son Yorick sont conserves.
 Pour les lancements suivants, seule la deuxieme commande est necessaire.
+La compilation doit terminer par `Application libraries rebuilt successfully`.
+Les deux bibliotheques `.so` doivent etre non vides. Le lanceur bloque maintenant
+le demarrage si l'une manque ou est vide, avec la commande de reconstruction.
+En cas d'erreur, conserver la sortie de compilation pour identifier sa cause.
+
 
 ## Commande spydr-new
 

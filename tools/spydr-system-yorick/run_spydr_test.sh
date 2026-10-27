@@ -23,11 +23,13 @@ if [ ! -x "$YORICK_BIN" ]; then
   exit 1
 fi
 
-if [ ! -f "$BUNDLE_ROOT/libcamicaz/libcamicaz.so" ] || [ ! -f "$CAMTOP/yCamicaz.so" ]; then
-  echo "Test binaries are missing in the bundle." >&2
-  echo "Run ./rebuild_with_existing_yorick.sh first on the original machine." >&2
-  exit 1
-fi
+for library in "$BUNDLE_ROOT/libcamicaz/libcamicaz.so" "$CAMTOP/yCamicaz.so"; do
+  if [ ! -s "$library" ]; then
+    echo "Cannot start: shared library is missing or empty: $library" >&2
+    echo "Build this copy with: sh rebuild_with_existing_yorick.sh" >&2
+    exit 1
+  fi
+done
 
 export CAMTOP
 export STYCTOP="$CAMTOP"
