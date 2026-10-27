@@ -202,12 +202,23 @@ class spydr:
          self.spydr_version = version_file.read().strip()
       finally:
          version_file.close()
-      self.app_title = 'Spydr / Camicaz v%s (test)' % self.spydr_version
+      self.app_title = 'Spydr / Camicaz v%s' % self.spydr_version
       self.spydr_showlower = spydr_showlower
       self.spydr_defaultdpi = spydr_dpi
       self.spydr_dpi = spydr_dpi
       self.spydr_showplugins = spydr_showplugins
       self.usercmd = 'STOP'
+
+      # Set the application icon before Glade creates the windows.
+      icons = []
+      for size in (16, 32, 48, 128):
+         icon_path = os.path.join(self.spydrtop, 'spydr-doux-%d.png' % size)
+         try:
+            icons.append(gtk.gdk.pixbuf_new_from_file(icon_path))
+         except (gobject.GError, IOError):
+            sys.stderr.write('Spydr: could not load icon %s\n' % icon_path)
+      if icons:
+         gtk.window_set_default_icon_list(*icons)
 
       # callbacks and glade UI
 
@@ -216,8 +227,10 @@ class spydr:
       self.window.set_title(self.app_title)
       about = self.glade.get_widget('aboutdialog')
       about.set_name('Spydr / Camicaz')
+      if icons:
+         about.set_logo(icons[-1])
       about.set_version(self.spydr_version)
-      about.set_comments('NICMOS acquisition and image analysis - test release')
+      about.set_comments('NICMOS acquisition and image analysis\nMaintenance and improvements: Yannis Benazza')
       # handle destroy event
       if (self.window):
          self.window.connect('destroy', self.destroy)
@@ -275,6 +288,8 @@ class spydr:
       self.glade.get_widget('comments').set_text('none')
 
       self.setup_resizing()
+      # Map only after optional panels and the startup size are configured.
+      self.window.show()
 
      # run
       gtk.main()
@@ -309,6 +324,7 @@ class spydr:
       # Capture natural startup size, not the potentially maximized allocation.
       width, height = self.window.size_request()
       self.window.set_geometry_hints(min_width=width, min_height=height)
+      self.window.set_default_size(width, height)
       self.window.set_resizable(True)
       self.glade.get_widget('hbox1').set_child_packing(
          self.glade.get_widget('vbox3'), True, True, 4, gtk.PACK_START)
@@ -333,10 +349,8 @@ class spydr:
       area = self.glade.get_widget('drawingarea1').get_allocation()
       dpi = max(self._resize_min_dpi, min(2400, int(min(
          (area.width-4)/5.95, (area.height-25)/5.96))))
-      width = int(5.95*dpi)+4
-      height = int(5.96*dpi)+25
-      geometry = (dpi, max(0, (area.width-width)//2)-2,
-                  max(0, (area.height-height)//2)-2)
+      # Leave spare space below/right, keeping the image beside its controls.
+      geometry = (dpi, -2, -2)
       if geometry != self._resize_last:
          self._resize_busy = True
          self._resize_last = geometry
@@ -708,8 +722,14 @@ class spydr:
          #   self.py2yo('plot_histo')
 
    def on_pixsize_value_changed(self,wdg):
-      if (self.done_init):
-         self.py2yo('spydr_set_pixsize %f' % self.glade.get_widget('pixsize').get_value())
+      # Read-only plate scale, updated by Yorick (including rebinning).
+      pass
+
+   def on_focal_length_value_changed(self,wdg):
+      if self.done_init:
+         focal = wdg.get_value()
+         if focal > 0:
+            self.py2yo('spydr_set_focal_length %.12g' % focal)
 
    def on_boxsize_value_changed(self,wdg):
       if (self.done_init):
@@ -900,10 +920,14 @@ class spydr:
    def on_window1_map_event(self,wdg,*args):
       if (self.win_init_done): return
       drawingarea = self.glade.get_widget('drawingarea1')
+      drawingarea.realize()
       mwid1 = drawingarea.window.xid;
       drawingarea = self.glade.get_widget('drawingarea2')
+      drawingarea.realize()
       mwid2 = drawingarea.window.xid;
       drawingarea = self.glade.get_widget('drawingarea3')
+      # The lower graph may never have been mapped in compact startup mode.
+      drawingarea.realize()
       mwid3 = drawingarea.window.xid;
       self.py2yo('spydr_win_init %d %d %d' % (mwid1,mwid2,mwid3))
       self.win_init_done = 1
@@ -1192,20 +1216,14 @@ class spydr:
          self.py2yo('cam_set_freerun_chopping %d' % active)
 
    def on_record_clicked(self,wdg,*args):
+      if getattr(self, '_pending_record_command', None):
+         return
       # SELECT_FOLDER distinguishes the selected folder from its displayed parent.
       fold = self.glade.get_widget('data_location').get_filename()
       if not fold or not os.path.isdir(fold):
          self.pyk_error('Please select an existing recording folder before starting Record.')
          return
       fold = fold.replace('\\', '\\\\').replace('"', '\\"')
-      if self.glade.get_widget('freerun').get_active():
-         self.glade.get_widget('freerun').set_active(0)
-      self.glade.get_widget('apply_param').set_sensitive(0)
-      self.glade.get_widget('freerun').set_sensitive(0)
-      self.glade.get_widget('acquire').set_sensitive(0)
-      #self.glade.get_widget('button_abort').set_sensitive(0)
-      self.glade.get_widget('record').set_sensitive(0)
-      self.glade.get_widget('button_stop').set_sensitive(1)
       typed = self.glade.get_widget('combotype').get_active()
       objectd = self.glade.get_widget('objname').get_text()
       nb_images  = self.glade.get_widget('spin_nseq').get_value_as_int()
@@ -1217,7 +1235,143 @@ class spydr:
          seqid = self.glade.get_widget('comboseq').get_active()
       else:
          seqid = -1
-      self.py2yo('record_image %d "%s" %d "%s" %d %d %d %d' % (typed,objectd,nb_images,fold,seqid,exp,lat,filt))
+      import base64, json, unicodedata
+      def as_text(value):
+         if isinstance(value, bytes):
+            return value.decode('utf-8', 'replace')
+         return value
+      def summary(value):
+         text = unicodedata.normalize('NFKD', as_text(value))
+         text = text.encode('ascii', 'replace').decode('ascii')
+         return ''.join(c if 32 <= ord(c) < 127 else ' ' for c in text)[:32]
+      def quoted(value):
+         return '@' + value.replace('\\', '\\\\').replace('"', '\\"')
+      observer = self.glade.get_widget('obsname').get_text()
+      notes = self.glade.get_widget('comments').get_text()
+      focal = self.glade.get_widget('focal_length').get_value()
+      metadata = dict(object=as_text(objectd), observer=as_text(observer),
+                      comments=as_text(notes), focal_length_mm=focal,
+                      software_version=getattr(self, 'spydr_version', 'unknown'))
+      payload = '@' + base64.b64encode(json.dumps(metadata, ensure_ascii=True).encode('utf-8')).decode('ascii')
+      self._pending_record_command = ('cam_record_request %d "%s" %d "%s" %d %d %d %d "%s" "%s" "%s" %.12f "%s"' %
+         (typed,quoted(summary(objectd)),nb_images,fold,seqid,exp,lat,filt,
+          quoted(summary(observer)),quoted(summary(notes)),payload,focal,
+          quoted(getattr(self, 'spydr_version', 'unknown'))))
+      self._pending_record_params = (filt, exp, lat)
+      self._record_request_id = getattr(self, '_record_request_id', 0) + 1
+      self.glade.get_widget('record').set_sensitive(0)
+      self.py2yo('cam_check_record_params %d %d %d %d' %
+                 ((self._record_request_id,) + self._pending_record_params))
+
+   def cancel_pending_record(self):
+      self._pending_record_command = None
+      if not getattr(self, '_resize_closed', False):
+         self.glade.get_widget('record').set_sensitive(1)
+
+   def record_parameters_checked(self, request_id, status):
+      if (getattr(self, '_resize_closed', False) or
+          request_id != getattr(self, '_record_request_id', None) or
+          not getattr(self, '_pending_record_command', None)):
+         return
+      if status == 0:
+         self.start_pending_record(request_id, False)
+      elif status == 1:
+         # Do not run a modal dialog inside the Yorick pipe IO callback.
+         if getattr(self, '_record_confirmation_id', None) != request_id:
+            self._record_confirmation_id = request_id
+            gobject.idle_add(self.confirm_record_apply, request_id)
+      else:
+         self.cancel_pending_record()
+         if status == 2:
+            self.glade.get_widget('record').set_sensitive(0)
+         gobject.idle_add(self.pyk_error,
+            'Finish or save the current recording first.' if status == 2 else
+            'Please select valid camera parameters before recording.')
+
+   def confirm_record_apply(self, request_id):
+      if (getattr(self, '_resize_closed', False) or
+          request_id != getattr(self, '_record_request_id', None) or
+          not getattr(self, '_pending_record_command', None)):
+         return False
+      dialog = gtk.MessageDialog(parent=self.window,
+         flags=gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
+         type=gtk.MESSAGE_QUESTION, buttons=gtk.BUTTONS_NONE,
+         message_format='Camera settings have not been applied. Apply them and start recording?')
+      dialog.format_secondary_text(
+         'Recording will start only after the camera acknowledges the settings. '
+         'If Apply fails, no recording will start.')
+      dialog.add_button('Cancel', gtk.RESPONSE_CANCEL)
+      dialog.add_button('Apply and Record', gtk.RESPONSE_APPLY)
+      dialog.set_default_response(gtk.RESPONSE_CANCEL)
+      try:
+         response = dialog.run()
+      finally:
+         dialog.destroy()
+      if response == gtk.RESPONSE_APPLY:
+         self.start_pending_record(request_id, True)
+      else:
+         self.cancel_pending_record()
+      return False
+
+   def start_pending_record(self, request_id, apply_first):
+      if (getattr(self, '_resize_closed', False) or
+          request_id != getattr(self, '_record_request_id', None) or
+          not getattr(self, '_pending_record_command', None)):
+         return
+      selected = tuple(self.glade.get_widget(name).get_active()
+                       for name in ('num_filter', 'num_expo', 'num_latency'))
+      if selected != self._pending_record_params:
+         self.cancel_pending_record()
+         gobject.idle_add(self.pyk_error, 'Camera settings changed. Please click Record again.')
+         return
+      command = self._pending_record_command
+      self._pending_record_command = None
+      if self.glade.get_widget('freerun').get_active():
+         self.glade.get_widget('freerun').set_active(0)
+      for name in ('apply_param', 'freerun', 'acquire', 'record'):
+         self.glade.get_widget(name).set_sensitive(0)
+      self.glade.get_widget('button_stop').set_sensitive(1)
+      command += ' %d' % bool(apply_first)
+      self.py2yo(command)
+
+   def record_progress_state(self, state, saved, requested):
+      bar = self.glade.get_widget('obs_progress')
+      # GTK2 draws the filled progress segment with the PRELIGHT state.
+      for gtk_state in (gtk.STATE_PRELIGHT, gtk.STATE_SELECTED):
+         bar.modify_bg(gtk_state, None)
+      fraction = float(saved) / requested if requested > 0 else 0.0
+      bar.set_fraction(min(1.0, max(0.0, fraction)))
+      colour = None
+      if state == 0:
+         bar.set_fraction(0.0)
+         text = 'Preparing record...'
+      elif state == 1:
+         text = 'Saving FITS...'
+      elif state == 2:
+         bar.set_fraction(1.0)
+         colour = '#36834A'
+         text = 'Record successful - %d/%d saved' % (saved, requested)
+      elif state == 3:
+         colour = '#B57918'
+         text = 'Record interrupted - %d/%d saved' % (saved, requested)
+      elif state == 4:
+         colour = '#B53636'
+         text = 'Save failed - data retained'
+      elif state == 6:
+         colour = '#B57918'
+         text = 'Record stopped - no images saved'
+      else:
+         colour = '#B53636'
+         text = 'Record failed - no images saved'
+      if colour is not None:
+         for gtk_state in (gtk.STATE_PRELIGHT, gtk.STATE_SELECTED):
+            bar.modify_bg(gtk_state, gtk.gdk.color_parse(colour))
+      bar.set_text(text)
+      bar.set_tooltip_text(text)
+
+   def record_apply_failed(self):
+      gobject.idle_add(self.pyk_error,
+         'Apply failed. Recording was not started. Check the camera connection and settings, then try again.')
 
    def on_button_stop_clicked(self,wdg,*args):
       self.py2yo('abort_record')

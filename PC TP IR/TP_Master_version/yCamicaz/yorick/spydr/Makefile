@@ -20,6 +20,7 @@ PKG_NAME = spydr
 PKG_I=spydr.i spydr_plugins.i spydr_psffit.i spydr_various.i spydr_pyk.i spydr_input_data_format.i spydr_widgetcam.i spydr_fitsutils.i 
 # autoload file for this package, if any
 PKG_I_START=spydr_start.i
+PKG_ICONS=spydr-doux-16.png spydr-doux-32.png spydr-doux-48.png spydr-doux-128.png
 
 # override macros Makepkg sets for rules and other macros
 # Y_HOME and Y_SITE in Make.cfg may not be correct (e.g.- relocatable)
@@ -52,7 +53,7 @@ install::
 	cp -p $(PKG_I) $(DEST_Y_SITE)/i/
 	cp -p $(PKG_I_START) $(DEST_Y_SITE)/i-start/
 	cp -p spydr.py $(DEST_Y_SITE)/python/
-	cp -p spydr.glade $(DEST_Y_SITE)/glade/
+	cp -p spydr.glade $(PKG_ICONS) $(DEST_Y_SITE)/glade/
 	cp -p spydr*.gs $(DEST_Y_SITE)/g/
 	cp -p spydr*.gs $(DEST_Y_SITE)/gist/
 	cp -p spydr.conf $(DEST_Y_SITE)/share/spydr/
@@ -66,6 +67,7 @@ uninstall::
 	-cd $(DEST_Y_SITE)/i-start; rm $(PKG_I_START) 
 	-rm $(DEST_Y_SITE)/python/spydr.py
 	-rm $(DEST_Y_SITE)/glade/spydr.glade
+	-cd $(DEST_Y_SITE)/glade; rm $(PKG_ICONS)
 	-rm $(DEST_Y_SITE)/g/spydr*.gs
 	-rm $(DEST_Y_SITE)/gist/spydr*.gs
 	-rm -rf $(DEST_Y_SITE)/share/spydr
@@ -92,7 +94,7 @@ package:
 
 	cp -p $(PKG_I) pkg/$(PKG_NAME)/dist/y_site/i/
 	cp -p spydr.py pkg/$(PKG_NAME)/dist/y_site/python/
-	cp -p spydr.glade pkg/$(PKG_NAME)/dist/y_site/glade/
+	cp -p spydr.glade $(PKG_ICONS) pkg/$(PKG_NAME)/dist/y_site/glade/
 	cp -p *.gs pkg/$(PKG_NAME)/dist/y_site/g/
 	cp -p *.gs pkg/$(PKG_NAME)/dist/y_site/gist/
 	cp -p spydr.conf pkg/$(PKG_NAME)/dist/y_site/share/spydr/

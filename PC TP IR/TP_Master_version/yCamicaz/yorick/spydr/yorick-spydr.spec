@@ -1,5 +1,5 @@
 %define name yorick-spydr
-%define version 0.9.7
+%define version 0.9.8b
 %define release gemini2009mar11
 
 Summary: GUI for image display in yorick
@@ -57,7 +57,7 @@ install -m 644 *.i $RPM_BUILD_ROOT/usr/lib/yorick/i
 install -m 644 *_start.i $RPM_BUILD_ROOT/usr/lib/yorick/i-start
 install -m 755 spydr $RPM_BUILD_ROOT/usr/bin
 install -m 755 spydr.py $RPM_BUILD_ROOT/usr/lib/yorick/python
-install -m 644 spydr.glade $RPM_BUILD_ROOT/usr/lib/yorick/glade
+install -m 644 spydr.glade spydr-doux-*.png $RPM_BUILD_ROOT/usr/lib/yorick/glade
 install -m 644 *.gs $RPM_BUILD_ROOT/usr/lib/yorick/g
 install -m 644 test*.fits $RPM_BUILD_ROOT/usr/share/doc/%{name}
 install -m 644 LICENSE $RPM_BUILD_ROOT/usr/share/doc/%{name}
@@ -78,6 +78,7 @@ rm -rf $RPM_BUILD_ROOT
 /usr/bin/spydr
 /usr/lib/yorick/python/spydr.py*
 /usr/lib/yorick/glade/spydr.glade
+/usr/lib/yorick/glade/spydr-doux-*.png
 /usr/lib/yorick/g/*.gs
 /etc/spydr.conf
 /usr/share/doc/%{name}

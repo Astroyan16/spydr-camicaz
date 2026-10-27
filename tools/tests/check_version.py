@@ -21,6 +21,9 @@ class Widget:
     def set_version(self, value):
         self.version = value
 
+    def set_logo(self, value):
+        self.logo = value
+
     def set_comments(self, value):
         self.comments = value
 
@@ -28,7 +31,7 @@ class Widget:
 class VersionTests(unittest.TestCase):
     def test_metadata(self):
         version = (SOURCE / "VERSION").read_text().strip()
-        self.assertRegex(version, r"^\d+\.\d+\.\d+$")
+        self.assertRegex(version, r"^\d+\.\d+\.\d+[a-z]?$")
         info = (SOURCE / "spydr.info").read_text()
         spec = (SOURCE / "yorick-spydr.spec").read_text()
         self.assertEqual(re.search(r"^Version: (.+)$", info, re.M)[1], version)
@@ -47,12 +50,16 @@ class VersionTests(unittest.TestCase):
             window, about = Widget(), Widget()
             widgets = {"window1": window, "aboutdialog": about}
             glade = SimpleNamespace(get_widget=widgets.__getitem__)
-            gtk = SimpleNamespace(glade=SimpleNamespace(XML=lambda path: glade))
+            gtk = SimpleNamespace(
+                glade=SimpleNamespace(XML=lambda path: glade),
+                gdk=SimpleNamespace(pixbuf_new_from_file=lambda path: path),
+                window_set_default_icon_list=lambda *icons: None)
             gui = SimpleNamespace()
             exec(initialization, dict(self=gui, spydrtop=folder, os=os, gtk=gtk,
+                                     gobject=SimpleNamespace(GError=RuntimeError),
                                      spydr_showlower=1, spydr_dpi=100,
                                      spydr_showplugins=1))
-            self.assertEqual(window.title, "Spydr / Camicaz v9.8.7 (test)")
+            self.assertEqual(window.title, "Spydr / Camicaz v9.8.7")
             self.assertEqual(about.version, "9.8.7")
             yorick = (SOURCE / "spydr.i").read_text()
             for command in re.findall(r'format="(window\.set_title\([^\n]+?)"', yorick):

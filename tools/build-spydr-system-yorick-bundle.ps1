@@ -26,6 +26,10 @@ Copy-Item -LiteralPath $sourceYCam -Destination (Join-Path $OutputDir "yCamicaz"
 Copy-Item -LiteralPath (Join-Path $templateDir "run_spydr_test.sh") -Destination $OutputDir
 Copy-Item -LiteralPath (Join-Path $templateDir "rebuild_with_existing_yorick.sh") -Destination $OutputDir
 Copy-Item -LiteralPath (Join-Path $templateDir "README_SYSTEM_YORICK.md") -Destination $OutputDir
+Copy-Item -LiteralPath (Join-Path $repoRoot "docs\FITS_METADATA.md") -Destination $OutputDir
+Copy-Item -LiteralPath (Join-Path $repoRoot "docs\FOCALE_NICMOS.md") -Destination $OutputDir
+Copy-Item -LiteralPath (Join-Path $repoRoot "docs\APPLY_AND_RECORD.md") -Destination $OutputDir
+Copy-Item -LiteralPath (Join-Path $repoRoot "docs\AUTO_STATUS.md") -Destination $OutputDir
 
 $dirsToRemove = @(
     (Join-Path $OutputDir "libcamicaz\.svn"),

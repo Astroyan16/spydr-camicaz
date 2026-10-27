@@ -1,7 +1,8 @@
 # Versions archivees sur GitHub
 
 Les livraisons principales conservees dans `dist/` ont ete archivees sur GitHub
-le **22 octobre 2026**. Chaque version dispose d'un tag, d'une release, d'une
+le **22 octobre 2026**. La release 0.9.8b a ete ajoutee le **27 octobre 2026**.
+Chaque version dispose d'un tag, d'une release, d'une
 archive ZIP et d'une empreinte SHA-256.
 
 [Voir toutes les releases](https://github.com/Astroyan16/spydr-camicaz/releases).
@@ -17,6 +18,7 @@ archive ZIP et d'une empreinte SHA-256.
 | 0.9.5 | [Tag v0.9.5](https://github.com/Astroyan16/spydr-camicaz/tree/v0.9.5) | [Release](https://github.com/Astroyan16/spydr-camicaz/releases/tag/v0.9.5) | Ajout du motif ABBABAABBAABABBA. |
 | 0.9.6 | [Tag v0.9.6](https://github.com/Astroyan16/spydr-camicaz/tree/v0.9.6) | [Release](https://github.com/Astroyan16/spydr-camicaz/releases/tag/v0.9.6) | Sauvegardes sans ecrasement, erreurs et acquisitions partielles. |
 | 0.9.7 | [Tag v0.9.7](https://github.com/Astroyan16/spydr-camicaz/tree/v0.9.7) | [Release](https://github.com/Astroyan16/spydr-camicaz/releases/tag/v0.9.7) | Correction de reconstruction des quadrants. |
+| 0.9.8b | [Tag v0.9.8b](https://github.com/Astroyan16/spydr-camicaz/tree/v0.9.8b) | [Release](https://github.com/Astroyan16/spydr-camicaz/releases/tag/v0.9.8b) | Release du 27 octobre 2026 : FITS METAVER=2, horloges natives, Record corrige, UTC et confirmation de sauvegarde. |
 
 ## Provenance
 
@@ -37,10 +39,12 @@ des fichiers. Les sources de `libcamicaz` et `yCamicaz` sont situees sous
 `PC TP IR/TP_Master_version/` ; les scripts de lancement et de reconstruction
 sont sous `tools/spydr-system-yorick/`.
 
-La publication s'arrete a la **0.9.7**. Les essais locaux 0.9.8 et 0.9.8b
-ont ete signales non fonctionnels par l'utilisateur le 22 octobre 2026 :
-ils ne sont pas proposes comme releases et n'ont pas de tags publies.
-Les fichiers locaux sont conserves pour un diagnostic ulterieur.
+Les essais initiaux 0.9.8 et 0.9.8b ont ete retires le 22 octobre 2026 apres
+signalement d'un blocage Record. Le protocole du Yorick historique a depuis
+ete corrige et l'acquisition a ete retestee sur l'instrument. La **0.9.8b corrigee**
+est publiee comme release le **27 octobre 2026**, depuis `main` ; le tag
+`v0.9.8b` pointe exclusivement sur cet etat corrige. La 0.9.8 reste locale.
+Voir [validation et installation](RELEASE_0.9.8b.md).
 
 Les essais intermediaires non numerotes (focale, disposition, redimensionnement)
 et les correctifs seuls n'ont pas de release distincte. Les versions publiees
@@ -61,7 +65,7 @@ sh rebuild_with_existing_yorick.sh
 sh run_spydr_test.sh
 ```
 
-Ces versions 0.9.x sont marquees comme preversions : elles restent a valider
-sur Scientific Linux 6.2 avec la camera NICMOS. Les dependances instrumentales
+Les archives 0.9.0 a 0.9.7 sont des preversions historiques. La 0.9.8b
+est une release avec les essais instrumentaux decrits dans ses notes. Les dependances instrumentales
 doivent deja etre disponibles ; l'installation stable et le Yorick existant
 ne doivent pas etre remplaces.

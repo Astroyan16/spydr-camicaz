@@ -9,7 +9,7 @@ from check_freerun import extract
 
 SOURCE = Path(__file__).resolve().parents[2] / "PC TP IR/TP_Master_version/yCamicaz/yorick/spydr"
 source = (SOURCE / "spydr_widgetcam.i").read_text()
-code = 'require,"fits.i";\n'
+code = (SOURCE / "spydr_metadata.i").read_text() + '\n'
 for name in ("cam_unique_filename", "camdata_save"):
     code += extract(source, "func", name)
 code += '''

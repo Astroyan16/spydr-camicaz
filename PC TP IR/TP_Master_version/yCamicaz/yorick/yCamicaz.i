@@ -5,6 +5,17 @@ if (!camtop)
 plug_dir, _(camtop,camtop+"/yorick","./","../",plug_dir());
 plug_in,"yCamicaz";
 
+extern yCamicaz_clock
+/* DOCUMENT t = yCamicaz_clock();
+     Returns [UTC seconds, UTC nanoseconds, monotonic seconds, monotonic nanoseconds].
+     Clocks are sampled successively; these are host times, not detector triggers.
+ */
+
+extern yCamicaz_clock_resolution
+/* DOCUMENT resolutions = yCamicaz_clock_resolution();
+     Returns [UTC resolution, monotonic resolution] in seconds.
+ */
+
 extern yCamicaz_new
 /* DOCUMENT 
      cam = yCamicaz_new("camicaz.ini");

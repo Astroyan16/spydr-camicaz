@@ -22,7 +22,7 @@ LIB_CAMICAZ_DIR ?= /home/etudiants/Packages/tp_master/tags/TP_Master_version/lib
 PKG_NAME = yCamicaz
 PKG_I=$(I_DIR)/yCamicaz.i
 
-C_OBJS= yCamicaz.o
+C_OBJS= yCamicaz.o yCamicaz_clock.o
 OBJS := $(addprefix $(O_DIR)/,$(C_OBJS))
 
 
@@ -32,6 +32,7 @@ OBJS := $(addprefix $(O_DIR)/,$(C_OBJS))
 # PKG_DEPLIBS=-Lsomedir -lsomelib   for dependencies of this package
 PKG_DEPLIBS = -L/usr/local/natinst/nidaqmx/lib -lnidaqmx 
 PKG_DEPLIBS+= -L$(LIB_CAMICAZ_DIR) -lcamicaz
+PKG_DEPLIBS+= -lrt
 PKG_DEPLIBS+= -L-lboost_system -lstdc++ # 
 
 # set compiler (or rarely loader) flags specific to this package

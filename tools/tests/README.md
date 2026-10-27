@@ -1,5 +1,37 @@
 # Freerun rendering regression
 
+## FITS metadata (0.9.8b)
+
+`python3 tools/tests/check_config_snapshot.py` checks metadata startup with
+on-disk config files, including blank lines, EOF, no final newline, empty and
+missing files and repeated Records. `--bundle dist/<bundle>` checks either
+delivery. It reproduced the 0.9.8/0.9.8b Record hang before the 2026-10-21 fix:
+comparing rdline's EOF nil string to [] never terminated the read loop.
+Recording and FITS suites now exercise real on-disk configuration snapshots.
+
+`python tools/tests/check_fits_metadata.py` validates real Yorick output with
+Astropy, independently of the writer. It runs Yorick through WSL Ubuntu on
+Windows, or directly on Linux. Python needs Astropy and NumPy. Checks include
+the primary cube, Start/End interpretation, observation settings, software
+version, cached probes and their age, focal scale, UTC dates, long Unicode
+text round-trip, per-exposure FRAMELOG, missing metadata and partial records.
+The clock bindings are built as C++98 against historical Yorick headers without
+NI dependencies. Schema 2 checks preserve integer seconds/nanoseconds exactly.
+`python3 tools/tests/check_native_clock.py` on Linux/WSL additionally exercises
+the real clocks in Yorick and prints their nominal resolutions and sample cost.
+Sequence tests cover UTC clock corrections, timestamp failure, and immutable
+timestamps on save retry. Rebuild the full isolated target bundle for 0.9.8b.
+See [FITS schema](../../docs/FITS_METADATA.md) for timing/calibration limitations.
+
+## Rendering
+
+`python tools/tests/check_record_folder.py` also tests the Apply and Record
+confirmation, cancellation, duplicate/stale requests and snapshot protection.
+`python3 tools/tests/check_chopping_sequences.py --bundle dist/<bundle>` tests
+either delivery, including Apply-before-primer, failed Apply, filter mapping and
+cache invalidation after Homing. Hardware acknowledgement is mocked; actual
+filter-wheel settling must be confirmed on the instrument.
+
 Release version checks (Python 3, no camera or GTK required):
 `python3 tools/tests/check_version.py`. These check package metadata and execute
 the GUI version initialization and title updates with GTK doubles.
@@ -132,16 +164,59 @@ On the instrument, enable and disable chopping during freerun, then repeat and
 restart with each checkbox state. Verify the physical alternation and unchanged
 recording behavior. Disabling stops alternation; it does not home the mechanism.
 
+## Automatic status polling
+
+`wsl -d Ubuntu -- python3 tools/tests/check_monitoring.py` runs the production
+Yorick polling functions with simulated serial IO and a timer double. Optional
+`--bundle dist/spydr_camicaz_0.9.8_fits_test` selects a delivered version.
+It checks startup, minute scheduling, manual/automatic reads during freerun,
+deferral while recording,
+one pending timer after repeated Status clicks, invalid values, read errors,
+recovery, preservation of the last valid FITS sample and shutdown cancellation.
+Hardware acceptance checks and serial timeout limitations are in
+`docs/AUTO_STATUS.md`.
+
 ## Resizable window
 
 `python3 tools/tests/check_window_resize.py` exercises the real Python callbacks
 with GTK and timer doubles. It checks debounce, one outstanding backend request,
 latest-size delivery, startup waiting, error recovery state and timer cleanup.
+It also checks that startup size is configured before mapping the window,
+hidden native graph widgets are realized before their XIDs are used, and spare
+space stays below/right instead of separating the image from its controls.
 It does not replace a PyGTK 2 test on the target PC.
 
 On the target, maximize/restore and drag both window dimensions, with freerun
 running and stopped. Check the startup minimum, image proportions, preserved zoom
 and palette, lower/plugins panels, and repeated resizing without memory growth.
-The main image fits using the smaller available dimension; unused space is normal
+The main image is anchored at the top left and fits using the smaller available dimension; unused space is normal
 and avoids stretching the camera image. Rebuilding the graph occurs after a
 200 ms pause in resizing, not for each mouse movement.
+
+
+## Historical Record wire protocol
+
+Run `python3 tools/tests/check_record_protocol.py` on Linux/WSL, optionally
+with `--bundle PATH`. The test compiles the retained historical `funcdef.c`
+in an isolated plugin, reproduces its silent rejection of keyword arguments,
+and runs the actual communication callback with the positional Record adapter.
+It checks fragmented/batched messages, long metadata, empty and escaped text,
+and Apply selection. No installed Yorick, NI driver or instrument is modified.
+Modern Yorick alone does not reproduce the old parser restriction.
+
+
+## UTC date formatting
+
+`python tools/tests/check_utc_format.py --bundle PATH` checks the actual
+Yorick formatter against 472 Python UTC calendar results and benchmarks it.
+On Windows it runs Yorick through WSL. No shell date command, timezone setting,
+clock configuration or instrument installation is needed or changed.
+
+
+## Record completion feedback
+
+`python tools/tests/check_record_progress.py` checks GTK2 bar text, colours,
+reset and failure states. `check_chopping_sequences.py` additionally verifies
+that green success follows a successful full save, partial Stop stays distinct,
+disk failures remain errors and a completed cube can succeed after save retry.
+The GTK2 rendering is also inspected; instrument UI validation remains required.

@@ -3,7 +3,7 @@
   <!-- interface-requires gtk+ 2.12 -->
   <!-- interface-naming-policy toplevel-contextual -->
   <widget class="GtkWindow" id="window1">
-    <property name="visible">True</property>
+    <property name="visible">False</property>
     <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_ENTER_NOTIFY_MASK | GDK_LEAVE_NOTIFY_MASK</property>
     <property name="title" translatable="yes">Spydr / Camicaz</property>
     <property name="resizable">False</property>
@@ -2760,22 +2760,41 @@ gaussian
                                 <property name="visible">True</property>
                                 <property name="xalign">0</property>
                                 <property name="xpad">3</property>
-                                <property name="label" translatable="yes">pixsize</property>
+                                <property name="label" translatable="yes">Effective focal length (mm)
+Plate scale (arcsec/pixel)</property>
                               </widget>
                               <packing>
                                 <property name="y_options"></property>
                               </packing>
                             </child>
                             <child>
+                              <widget class="GtkVBox" id="focal_scale_box">
+                                <property name="visible">True</property>
+                                <child>
+                                  <widget class="GtkSpinButton" id="focal_length">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="tooltip" translatable="yes">Effective focal length at the detector in mm, including relay optics. NICMOS pixels: 40 um. 0 keeps the existing plate scale. Applies to this session only.</property>
+                                    <property name="adjustment">0 0 10000000 10 100 0</property>
+                                    <property name="digits">2</property>
+                                    <property name="numeric">True</property>
+                                    <signal name="value_changed" handler="on_focal_length_value_changed"/>
+                                  </widget>
+                                </child>
+                                <child>
                               <widget class="GtkSpinButton" id="pixsize">
                                 <property name="visible">True</property>
-                                <property name="can_focus">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="editable">False</property>
+                                <property name="sensitive">False</property>
                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                                <property name="tooltip" translatable="yes">Pixel size [arcsec]</property>
-                                <property name="adjustment">0 0 2 1 10 0</property>
+                                <property name="tooltip" translatable="yes">Current image plate scale [arcsec/pixel], including resampling. Read-only.</property>
+                                <property name="adjustment">0 0 1000000000000 1 10 0</property>
                                 <property name="climb_rate">1</property>
                                 <property name="digits">5</property>
                                 <signal name="value_changed" handler="on_pixsize_value_changed"/>
+                              </widget>
+                                </child>
                               </widget>
                               <packing>
                                 <property name="left_attach">1</property>

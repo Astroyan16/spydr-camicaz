@@ -1,11 +1,27 @@
 # Historique Spydr / Camicaz
 
 Les [versions archivees sur GitHub](docs/VERSIONS.md) comprennent la reference
-historique 0.8.3 et les livraisons 0.9.0 a 0.9.7, avec tags et archives.
+historique 0.8.3, les livraisons 0.9.0 a 0.9.7 et la release 0.9.8b.
 Leur publication retrospective date du 22 octobre 2026.
 
-Les essais locaux 0.9.8 et 0.9.8b sont signales non fonctionnels et ne sont
-pas publies comme releases. L'archivage des livraisons s'arrete a la 0.9.7.
+## 0.9.8b - 2026-10-27 (release)
+
+- Metadonnees FITS figees au debut du Record : objet, observateur, commentaires,
+  configuration, reglages camera, focale et dernieres sondes connues.
+- Horloges natives UTC et monotone, avec secondes/nanosecondes conservees dans
+  FRAMELOG (METAVER=2, douze colonnes). Les dates texte UTC ont six decimales.
+- Correction du protocole Record pour le mini-parseur du Yorick 2.2.02x :
+  arguments positionnels et protection des champs texte vides.
+- Correction de lecture de camicaz.ini et conversion UTC sans processus date.
+- Confirmation Apply and Record, Status automatique avec report pendant Record,
+  reglage de focale et redimensionnement de la fenetre.
+- Etat final explicite de la sauvegarde : vert pour succes complet, orange pour
+  interruption sauvegardee, rouge si echec avec conservation des donnees.
+- Nouvelles icones et mention de Yannis Benazza sur la page principale About.
+- Acquisition et sauvegarde testees sur NICMOS / Scientific Linux avec Yorick
+  2.2.02x ; cubes fournis de deux puis cinq poses sans chopping. Les autres
+  modes n'ont pas tous fait l'objet de nouveaux essais instrumentaux.
+- La 0.9.7 reste la reference de secours ; la 0.9.8 demeure un essai local.
 
 ## 0.9.7 - 2026-10-16 (test)
 

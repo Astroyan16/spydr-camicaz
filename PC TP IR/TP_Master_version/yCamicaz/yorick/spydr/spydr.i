@@ -466,6 +466,7 @@ func spydr_win_init(pid1,pid2,pid3,redisp=)
   spydr_pyk,"done_init = 1";
   set_idler,spydr_ready_func;
   gui_realized=1;
+  cam_start_auto_monitoring;
 
   if (spydr_nim>0) {
     set_imnum,1;
@@ -2271,6 +2272,33 @@ func figure_image_wavelength(fh)
 }
 
 
+func spydr_set_focal_length(focal_mm)
+{
+  extern spydr_pixsize,spydrs,imnum;
+  if (!(focal_mm>0) || focal_mm>1.e7) return;
+  // 40 micrometre native pixels; small-angle scale in arcsec/pixel.
+  scale = (180.*3600./pi)*0.040/focal_mm;
+  spydr_pixsize = scale; // New camera frames must retain this calibration.
+  current_scale = scale;
+  if (imnum!=[]) {
+    // Preserve the current resampling factor, not the display zoom.
+    ratio = 1.;
+    if (spydrs(imnum).opixsize>0)
+      ratio = spydrs(imnum).pixsize/spydrs(imnum).opixsize;
+    spydrs(imnum).opixsize = scale;
+    spydrs(imnum).pixsize = current_scale = scale*ratio;
+  }
+  spydr_pyk,swrite(format="y_parm_update('pixsize',%.12g)",current_scale);
+  if (imnum!=[]) {
+    if (spydr_plot_in_arcsec) {
+      // Old angular limits are invalid after a calibration change.
+      window,spydr_wins(1);
+      limits;
+    }
+    spydr_disp;
+  }
+}
+
 func spydr_set_pixsize(value)
 {
   extern spydrs,imnum;
@@ -2534,6 +2562,7 @@ func which_spydrconf(void) {
 
 func spydr_quit(void)
 {
+  start_monitoring,0;
   extern spydr_context,stop_zoom,spydr_win_had_focus;
   extern gui_realized,zoom_started,spydr_disp;
   extern first_update;
@@ -2946,7 +2975,7 @@ if (spydr_context=="called_from_shell") spydr,targets;
 
 func spydr_ready_func(void)
 {
-  msg = swrite(format="Spydr / Camicaz v%s (test) ready",spydr_version);
+  msg = swrite(format="Spydr / Camicaz v%s ready",spydr_version);
   spydr_pyk_status_push,msg;
   write,format="%s\n",msg;
   maybe_prompt;

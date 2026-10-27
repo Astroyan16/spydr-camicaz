@@ -27,7 +27,7 @@ export LD_LIBRARY_PATH="$BUNDLE_ROOT/libcamicaz${LD_LIBRARY_PATH:+:$LD_LIBRARY_P
 
 cd "$SPYDR_DIR"
 SPYDR_VERSION=$(cat "$SPYDR_DIR/VERSION")
-echo "Spydr / Camicaz v$SPYDR_VERSION (test)"
+echo "Spydr / Camicaz v$SPYDR_VERSION"
 
 if command -v rlwrap >/dev/null 2>&1; then
   exec rlwrap "$YORICK_BIN" -i spydr.i "$@"
