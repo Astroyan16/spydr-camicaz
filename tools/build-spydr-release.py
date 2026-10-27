@@ -45,11 +45,11 @@ with zipfile.ZipFile(io.BytesIO(raw)) as z:
   data=z.read(item)
   items[dest]=data
   manifest.append(dict(path=dest,git_path=item.filename,git_commit=commit,sha256=hashlib.sha256(data).hexdigest()))
-for name in ('run_spydr_test.sh','rebuild_with_existing_yorick.sh'):
- source='tools/spydr-system-yorick/'+name
+for launcher_name in ('run_spydr_test.sh','rebuild_with_existing_yorick.sh'):
+ source='tools/spydr-system-yorick/'+launcher_name
  data=git('show',launchers_commit+':'+source)
- items[name]=data
- manifest.append(dict(path=name,git_path=source,git_commit=launchers_commit,sha256=hashlib.sha256(data).hexdigest()))
+ items[launcher_name]=data
+ manifest.append(dict(path=launcher_name,git_path=source,git_commit=launchers_commit,sha256=hashlib.sha256(data).hexdigest()))
 # Keep the delivered guide small; historical fix notes stay in the repository.
 for source,dest in (('README_RELEASE.md','README.md'),('docs/FITS_METADATA.md','docs/FITS_METADATA.md')):
  data=git('show',docs_commit+':'+source)
