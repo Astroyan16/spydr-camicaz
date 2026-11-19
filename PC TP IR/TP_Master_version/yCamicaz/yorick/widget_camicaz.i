@@ -169,7 +169,7 @@ func camicaz_start_freerun(run){
 func freerun_loop(one=){
   extern camicaz_buffer;
   if(!camicaz_freerun) return;
-  camicaz_buffer = -yCamicaz_get_image(camicaz_handle);
+  camicaz_buffer = 65535 - yCamicaz_get_image(camicaz_handle);
   camicaz_disp_select,camicaz_current_ndisp,1;
   camicaz_disp_zoom;
   //camicaz_load;
@@ -180,9 +180,9 @@ func snap_image(nb_images){
   extern camicaz_buffer,camicaz_name;
   
   if(nb_images==1)
-    camicaz_buffer = -yCamicaz_get_image(camicaz_handle);
+    camicaz_buffer = 65535 - yCamicaz_get_image(camicaz_handle);
   else
-    camicaz_buffer = -yCamicaz_get_cube(camicaz_handle,nb_images);
+    camicaz_buffer = 65535 - yCamicaz_get_cube(camicaz_handle,nb_images);
 
   camicaz_name="last image";
   camicaz_load;

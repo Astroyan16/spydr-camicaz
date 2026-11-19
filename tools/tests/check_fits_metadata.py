@@ -112,6 +112,8 @@ cam_buffer=array(999,2,2,2,2); cam_buffer(,,,2)=43;
         assert header["NSAVED"] == 4 and not header["PARTIAL"]
         assert header["READ1"] == "Start" and header["READ2"] == "End"
         assert not header["BGSUB"] and header["FOCVALID"]
+        assert header["ADUOFF"] == 65535
+        assert "65535 - camera readout" in str(header["HISTORY"])
         assert abs(header["PIXSCALE"] - 0.8250592249883855) < 1e-12
         assert header["FOCALLEN"] == 10000.
         assert header["HKRAW2"] == 45 and header["TEMP2"] == 67.5

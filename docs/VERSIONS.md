@@ -22,6 +22,11 @@ archive ZIP et d'une empreinte SHA-256.
 
 ## Provenance
 
+La [0.9.9](RELEASE_0.9.9.md), du 19 novembre 2026, ajoute la convention
+`ADU = 65535 - lecture_camera` : Start/End positifs et Diff inchange.
+[Telecharger la release 0.9.9](https://github.com/Astroyan16/spydr-camicaz/releases/tag/v0.9.9).
+Les tests logiciels sont fournis ; la validation NICMOS reste a effectuer.
+
 La version historique 0.8.3 correspond a `PC TP IR/TP_Master_version` dans le
 premier commit Git `2d2c0ad`. `spydr.i` declare 0.8.3 ; certains fichiers
 historiques d'empaquetage indiquent encore 0.8.2. Les sources sont conservees

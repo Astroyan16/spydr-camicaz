@@ -51,7 +51,7 @@ func cam_get_image(handle) {
   prime_reads++;
   if (expect_apply_first) check,parameter_ready,"primer started before Apply acknowledgement";
   if (fail_prime) error,"injected primer failure";
-  return -array(999,2,2,2);
+  return array(65535-999,2,2,2);
 }
 func cam_is_open(handle) { return camera_open; }
 func cam_homing(handle) { return 0; }
@@ -69,7 +69,9 @@ func cam_get_next_image(handle) {
   reads++;
   if (fail_return_clock) { fail_clock_once=1; fail_return_clock=0; }
   if (fail_after_read) camera_open=0;
-  return -array(reads,2,2,2);
+  frame=array(65535-reads,2,2,2);
+  frame(,,2)-=100;
+  return frame;
 }
 func cam_chopping(handle,state) {
   extern test_dtr_state,commands;
@@ -112,9 +114,13 @@ func fits_write(filename,data,overwrite=) {
   if (dimsof(data)(1)==3) saved_count=1;
   else saved_count=dimsof(data)(5);
   check,saved_count==cam_seqind,"saved cube lost or added exposures";
-  if (saved_count==1) check,allof(data==1),"single exposure is not the acquired frame";
-  else for (i=1;i<=saved_count;i++)
-    check,allof(data(,,,i)==i),"saved frames reordered or primer retained";
+  if (saved_count==1) {
+    check,allof(data(,,1)==1) && allof(data(,,2)==101),"single exposure conversion failed";
+    check,allof(data(,,2)-data(,,1)==100),"single exposure Diff changed";
+  } else for (i=1;i<=saved_count;i++) {
+    check,allof(data(,,1,i)==i) && allof(data(,,2,i)==i+100),"saved frames reordered or conversion failed";
+    check,allof(data(,,2,i)-data(,,1,i)==100),"cube Diff changed";
+  }
 }
 func run_case(mode,repeats,initial,expected,apply_first=) {
   extern test_dtr_state,observed,commands,reads,pauses,saves,loads,pending,max_pending;

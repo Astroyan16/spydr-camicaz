@@ -191,7 +191,7 @@ func freerun_loop(one=){
   if (!cam_is_open(cam_handle)) {
     error,"Camera unavailable";
   }
-  cam_buffer = -cam_get_image(cam_handle);
+  cam_buffer = 65535 - cam_get_image(cam_handle);
   if (!cam_is_open(cam_handle)) error,"Camera acquisition failed";
   if (cam_freechop > -1) {
     cam_chopping,cam_handle,cam_freechop;
@@ -213,9 +213,9 @@ func snap_image(nb_images){
   }
   
   if(nb_images==1)
-    cam_buffer = -cam_get_image(cam_handle);
+    cam_buffer = 65535 - cam_get_image(cam_handle);
   else
-    cam_buffer = -cam_get_cube(cam_handle,nb_images);
+    cam_buffer = 65535 - cam_get_cube(cam_handle,nb_images);
 
   cam_name="last image";
   spydr_pyk,cmd_cam+"glade.get_widget('apply_param').set_sensitive(1)";
@@ -495,7 +495,7 @@ func record_image(typed,objectd,nb_images,fold,seqid,exp,lat,filt,observer=,note
   create_cam_filename,filename,typed,objectd,nb_images,filt,exp,lat;
   cam_filename = fold+"/"+filename;
   
-  cam_buffer = -cam_get_image(cam_handle)(,,,-:1:1);
+  cam_buffer = 65535 - cam_get_image(cam_handle)(,,,-:1:1);
   if (!cam_is_open(cam_handle)) error,"Camera acquisition failed";
 
   cam_seqid = seqid;
@@ -537,7 +537,7 @@ func add_image
     pause,500;
   }
   requested=yCamicaz_clock();
-  frame=-cam_get_next_image(cam_handle);
+  frame=65535 - cam_get_next_image(cam_handle);
   returned=yCamicaz_clock();
   if (!cam_is_open(cam_handle)) error,"Camera acquisition failed";
   extern cam_frame_log;

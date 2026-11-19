@@ -44,7 +44,7 @@ func cam_get_image(handle) {
   acquisitions++;
   if (fail_acquire) error,"injected acquisition failure";
   if (fail_after_read) camera_open=0;
-  return -array(acquisitions%200,256,256,2);
+  return array(65535-acquisitions%200,256,256,2);
 }
 func cam_chopping(handle,state) { extern chop_states; grow,chop_states,state; }
 

@@ -20,7 +20,9 @@ args=parser.parse_args()
 source=(args.bundle/'yCamicaz/yorick/spydr' if args.bundle else
         ROOT/'PC TP IR/TP_Master_version/yCamicaz/yorick/spydr')
 version=(source/'VERSION').read_text().strip()
-fine=version.endswith('b')
+# Only the initial 0.9.8 formatter used whole seconds; 0.9.8b and later
+# retain microseconds, including versions without a letter suffix.
+fine=version!='0.9.8'
 formatter=extract((source/'spydr_metadata.i').read_text(),'func','cam_utc')
 assert 'popen' not in formatter and 'rdline' not in formatter
 

@@ -1,5 +1,14 @@
 # Freerun rendering regression
 
+## Conversion ADU (0.9.9)
+
+`python3 tools/tests/check_adu_conversion.py` execute les fonctions Yorick de
+capture simple, cube et freerun des deux interfaces avec une camera simulee.
+Les codes limites 0/65535, les axes et les differences de signes opposes sont
+verifies. Les tests Record verifient aussi Start/End distincts et Diff inchange.
+Les tests FITS verifient ADUOFF=65535 et la convention dans HISTORY.
+Cette validation logicielle ne remplace pas les essais NICMOS.
+
 ## FITS metadata (0.9.8b)
 
 `python3 tools/tests/check_config_snapshot.py` checks metadata startup with

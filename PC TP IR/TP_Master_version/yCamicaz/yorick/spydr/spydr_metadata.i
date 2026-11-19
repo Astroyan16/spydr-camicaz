@@ -86,8 +86,10 @@ func cam_write_fits(filename,data,background=)
   if (numberof(dimsof(data))==5) fits_set,fh,"CTYPE4","EXPOSURE";
   fits_set,fh,"XPIXSZ",40.,"Native pixel pitch [um]";
   fits_set,fh,"YPIXSZ",40.,"Native pixel pitch [um]";
+  fits_set,fh,"ADUOFF",65535,"Stored ADU = ADUOFF - camera readout";
   fits_set,fh,"BGSUB",'F',"Recorded arrays are not background subtracted";
-  fits_set,fh,"HISTORY","Camera arrays are quadrant-reconstructed and sign-inverted by Camicaz/Spydr. Start and End are retained; Diff is not stored.";
+  fits_set,fh,"HISTORY","Stored ADU = 65535 - camera readout; quadrant-reconstructed.";
+  fits_set,fh,"HISTORY","Start and End are retained; Diff = End - Start is not stored.";
   if (numberof(cam_meta)==8) {
     types=["Calibration","Science","Test"];
     filters=["dark","J","H","K"];

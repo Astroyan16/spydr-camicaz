@@ -1,4 +1,4 @@
-# Spydr / Camicaz 0.9.8b
+# Spydr / Camicaz 0.9.9
 
 Acquisition et visualisation de la camera NICMOS. Cette livraison utilise le
 Yorick et les pilotes NI deja installes sur le PC instrument.
@@ -51,7 +51,7 @@ role historique. Le dossier de la nouvelle version doit conserver son emplacemen
 
 Creer un lanceur de type **Application dans un terminal** :
 
-- Nom : **Spydr 0.9.8b**.
+- Nom : **Spydr 0.9.9**.
 - Commande : le chemin complet de `bin/spydr-new` dans le dossier personnel.
 - Icone : `yCamicaz/yorick/spydr/spydr-doux-48.png` dans cette livraison.
 
@@ -84,14 +84,15 @@ les conventions d'image et les limites de precision.
 
 ## Version et validation
 
-La release inclut les corrections Record du Yorick historique, les metadonnees,
-les horloges UTC/monotone, les dates UTC, l'etat final de sauvegarde, les icones
-et le credit de maintenance dans About.
+La 0.9.9 convertit les lectures par `ADU = 65535 - lecture_camera`, pour
+obtenir Start et End entre 0 et 65535. `End - Start` est strictement inchange.
+Les nouveaux FITS portent ADUOFF=65535. Les anciens cubes ne sont pas modifies.
+Les darks, flats et images scientifiques doivent utiliser la meme convention.
 
-Des series de deux puis cinq poses sans chopping ont ete verifiees sur NICMOS
-avec Yorick 2.2.02x ; les 21 scripts de regression passent. Tous les modes
-materiels n'ont pas fait l'objet de nouveaux essais. La 0.9.7 reste disponible
-comme reference de secours.
+Les tests logiciels couvrent les valeurs limites, les captures, le freerun,
+les sequences Record et les metadonnees FITS. La nouvelle conversion reste
+a valider sur NICMOS dans ce dossier isole. Les essais instrumentaux de
+la 0.9.8b ne constituent pas une validation materielle de la 0.9.9.
 
 Le manifeste et le bilan des tests sont dans `docs/verification/`.
 Les SHA-256 des archives sont fournis sur la page de release.

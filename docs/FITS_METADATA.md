@@ -1,10 +1,17 @@
-# Metadonnees FITS des acquisitions Record (0.9.8b)
+# Metadonnees FITS des acquisitions Record (0.9.9)
 
 Les nouvelles acquisitions Record conservent leur tableau primaire historique :
 `[256,256,2,N]` dans l'ordre FITS, ou `[256,256,2]` pour une seule exposition.
 Les deux lectures sont Start puis End. Diff correspond a End - Start et n'est
-pas stocke comme une troisieme lecture. Les valeurs signees sont reconstruites
-par quadrants et inversees en signe par la chaine Camicaz/Spydr.
+pas stocke comme une troisieme lecture. Les nouvelles lectures sont reconstruites
+par quadrants puis converties par `ADU = 65535 - lecture_camera`, entre 0 et 65535.
+Cette convention ajoute 65535 aux anciennes valeurs signees et conserve exactement
+`End - Start`, y compris les differences negatives dues au bruit.
+Les acquisitions existantes restent inchangees. Darks et flats doivent utiliser
+la meme convention que les acquisitions scientifiques. Pour comparer les lectures
+Start/End anciennes et nouvelles, ajouter 65535 aux anciennes une seule fois.
+Le mot-cle ADUOFF=65535 identifie cette nouvelle convention ; son absence dans
+un ancien fichier ne permet pas, a elle seule, de deduire la convention.
 La soustraction du fond d'affichage ne modifie pas les donnees enregistrees.
 
 Les informations sont figees au lancement de Record. Un changement ulterieur
@@ -34,6 +41,7 @@ ne peuvent pas etre reconstituees automatiquement.
 | CHOPPING, CHOPPAT, CHOPWAIT, CHOPMAP | Activation, motif repete, attente et correspondance DTR |
 | XPIXSZ, YPIXSZ | Pas natif suppose : 40 micrometres |
 | FOCVALID, FOCALLEN, PIXSCALE | Focale effective saisie en mm et echelle native en arcsec/pixel |
+| ADUOFF | Offset de conversion : ADU stocke = 65535 - lecture camera |
 | BGSUB | Faux : le fond d'affichage n'a pas ete soustrait au cube |
 | HKVALID, HKMJD, HKAGE | Disponibilite, date et anciennete des dernieres sondes disponibles |
 | HKRAW1..4, HKFACTOR, TEMP1..4 | Valeurs brutes, facteur historique 1.5 et valeurs affichees en K |

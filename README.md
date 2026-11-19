@@ -1,10 +1,10 @@
 # Spydr / Camicaz
 
-Version courante : **0.9.8b**, release publiee le 27 octobre 2026.
+Version courante : **0.9.9**, release du 19 novembre 2026 (validation NICMOS a effectuer).
 
-[Telecharger la release](https://github.com/Astroyan16/spydr-camicaz/releases/tag/v0.9.8b)
+[Telecharger la release](https://github.com/Astroyan16/spydr-camicaz/releases/tag/v0.9.9)
 - [Historique des versions](docs/VERSIONS.md)
-- [Validation et installation 0.9.8b](docs/RELEASE_0.9.8b.md).
+- [Validation et installation 0.9.9](docs/RELEASE_0.9.9.md).
 Le [Status automatique des sondes](docs/AUTO_STATUS.md) est demande au demarrage
 puis toutes les minutes, y compris en freerun, avec report pendant Record.
 La version d'execution est definie dans
@@ -41,7 +41,7 @@ Les fichiers LabVIEW `.vi` sont egalement exclus du perimetre actuel.
 Depuis un tag local existant, sans modifier la copie de travail :
 
 ```sh
-python tools/build-spydr-release.py --ref v0.9.8b --docs-ref HEAD --launchers-ref HEAD --revision r3 --output dist/rebuild_0.9.8b_r3
+python tools/build-spydr-release.py --ref v0.9.9 --output dist/rebuild_0.9.9
 ```
 
 Le dossier de sortie doit etre nouveau. Le script prend les sources exactes
