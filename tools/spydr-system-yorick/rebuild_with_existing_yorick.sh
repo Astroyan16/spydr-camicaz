@@ -88,4 +88,4 @@ echo "  $LIB_DIR/libcamicaz.so"
 echo "  $YCAM_DIR/yCamicaz.so"
 echo
 echo "Launch with:"
-echo "  ./run_spydr_test.sh"
+echo "  sh run_spydr.sh"

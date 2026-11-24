@@ -15,7 +15,8 @@ Cette livraison est destinee a une copie isolee sur la machine Linux d'origine s
 
 - `libcamicaz/`
 - `yCamicaz/`
-- `run_spydr_test.sh`
+- `run_spydr.sh`
+- `install_spydr.sh`
 - `rebuild_with_existing_yorick.sh`
 
 ## Utilisation sur la machine Linux d'origine
@@ -26,7 +27,7 @@ Une livraison neuve ne contient pas les deux bibliotheques compilees :
 
 ```sh
 sh rebuild_with_existing_yorick.sh
-sh run_spydr_test.sh
+sh run_spydr.sh
 ```
 
 Avec `sh`, aucun `chmod` n'est necessaire. Les dependances doivent deja etre
@@ -59,7 +60,7 @@ test de focale precedent fonctionne deja, fermer Spydr puis remplacer :
 - `yCamicaz/yorick/spydr/spydr.py`
 - `yCamicaz/yorick/spydr/spydr.glade`
 
-Relancer `sh run_spydr_test.sh` ; aucune recompilation n'est necessaire pour
+Relancer `sh run_spydr.sh` ; aucune recompilation n'est necessaire pour
 ces deux fichiers. Pour une nouvelle livraison complete, effectuer les deux
 commandes de reconstruction et de lancement ci-dessus.
 
@@ -102,7 +103,7 @@ Si besoin, tu peux imposer explicitement le binaire:
 
 ```sh
 SPYDR_TEST_YORICK_BIN=/chemin/vers/yorick sh rebuild_with_existing_yorick.sh
-SPYDR_TEST_YORICK_BIN=/chemin/vers/yorick sh run_spydr_test.sh
+SPYDR_TEST_YORICK_BIN=/chemin/vers/yorick sh run_spydr.sh
 ```
 
 Tu peux aussi imposer la racine Yorick si l'autodetection du `relocate` n'est pas correcte:

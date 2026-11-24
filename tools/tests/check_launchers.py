@@ -13,13 +13,14 @@ class LauncherTests(unittest.TestCase):
  def setUp(self):
   self.tmp=tempfile.TemporaryDirectory(prefix='spydr-launcher-')
   self.addCleanup(self.tmp.cleanup)
-  self.root=Path(self.tmp.name)
+  self.root=Path(self.tmp.name)/"release with space and ' quote"
+  self.root.mkdir()
   for d in ('libcamicaz','yCamicaz/yorick/spydr','fake-yorick/bin','commands'):(self.root/d).mkdir(parents=True)
-  for name in ('run_spydr_test.sh','rebuild_with_existing_yorick.sh'):
+  for name in ('run_spydr.sh','install_spydr.sh','rebuild_with_existing_yorick.sh'):
    (self.root/name).write_text((SOURCE/name).read_text())
   (self.root/'yCamicaz/yorick/spydr/VERSION').write_text('0.9.8b\n')
   (self.root/'fake-yorick/Make.cfg').write_text('# test fixture\n')
-  self.executable('fake-yorick/bin/yorick','#!/bin/sh\nprintf "YORICK_STARTED\\n"\n')
+  self.executable('fake-yorick/bin/yorick','#!/bin/sh\nprintf "YORICK_STARTED\\n"\nprintf "ARG:%s\\n" "$@"\n')
   self.executable('commands/rlwrap','#!/bin/sh\nexec "$@"\n')
   self.executable('commands/g++','#!/bin/sh\nexit 0\n')
   self.executable('commands/make','''#!/usr/bin/python3
@@ -34,7 +35,8 @@ kind='lib' if p.name=='libcamicaz' else 'ycam'
 if mode=='missing_'+kind:sys.exit(0)
 (p/lib).write_bytes(b'' if mode=='empty_'+kind else b'test fixture, not a real library')
 ''')
-  self.env=dict(os.environ,PATH=str(self.root/'commands')+':'+os.environ['PATH'],
+  self.home=Path(self.tmp.name)/'home';(self.home/'bin').mkdir(parents=True)
+  self.env=dict(os.environ,HOME=str(self.home),PATH=str(self.root/'commands')+':'+os.environ['PATH'],
    SPYDR_TEST_YORICK_BIN=str(self.root/'fake-yorick/bin/yorick'),
    SPYDR_TEST_YORICK_ROOT=str(self.root/'fake-yorick'),MAKE_LOG=str(self.root/'make.log'))
  def executable(self,name,text):
@@ -47,13 +49,13 @@ if mode=='missing_'+kind:sys.exit(0)
    with self.subTest(values=values):
     for p,value in zip(libs,values):
      if value is not None:p.write_bytes(value)
-    r=self.run_script('run_spydr_test.sh')
+    r=self.run_script('run_spydr.sh')
     self.assertNotEqual(r.returncode,0)
     self.assertIn('missing or empty',r.stderr)
     self.assertNotIn('YORICK_STARTED',r.stdout)
  def test_launch_accepts_nonempty_libraries(self):
   for name in ('libcamicaz/libcamicaz.so','yCamicaz/yCamicaz.so'):(self.root/name).write_bytes(b'fixture')
-  r=self.run_script('run_spydr_test.sh')
+  r=self.run_script('run_spydr.sh')
   self.assertEqual(r.returncode,0,r.stderr)
   self.assertIn('YORICK_STARTED',r.stdout)
  def test_build_rejects_missing_and_empty_outputs(self):
@@ -72,9 +74,26 @@ if mode=='missing_'+kind:sys.exit(0)
   self.assertTrue((self.root/'libcamicaz/libcamicaz.so').stat().st_size)
   self.assertTrue((self.root/'yCamicaz/yCamicaz.so').stat().st_size)
 
+ def test_install_updates_command_and_preserves_historical_launcher(self):
+  stable=self.home/'bin/spydr';stable.write_text('historical launcher\n')
+  command=self.home/'bin/spydr-new';command.write_text('previous launcher\n')
+  r=self.run_script('install_spydr.sh',BUILD_MODE='ok')
+  self.assertEqual(r.returncode,0,r.stdout+r.stderr)
+  self.assertEqual(stable.read_text(),'historical launcher\n')
+  self.assertTrue(os.access(command,os.X_OK))
+  r=subprocess.run([str(command),'argument with spaces'],env=self.env,capture_output=True,text=True,timeout=10)
+  self.assertEqual(r.returncode,0,r.stderr)
+  self.assertIn('YORICK_STARTED',r.stdout)
+  self.assertIn('ARG:argument with spaces',r.stdout)
+ def test_failed_install_keeps_previous_command(self):
+  command=self.home/'bin/spydr-new';command.write_text('previous launcher\n')
+  r=self.run_script('install_spydr.sh',BUILD_MODE='make_fails')
+  self.assertNotEqual(r.returncode,0)
+  self.assertEqual(command.read_text(),'previous launcher\n')
+
 result=unittest.TextTestRunner().run(unittest.defaultTestLoader.loadTestsFromTestCase(LauncherTests))
 if args.report:
  args.report.write_text(json.dumps(dict(passed=result.wasSuccessful(),tests=result.testsRun,
-  cases='missing/empty libraries, no premature launch or build success, compiler failure, successful outputs',
+  cases='missing/empty libraries, no premature launch or build success, compiler failure, successful outputs, installer success/failure, quoted paths and arguments',
   environment='isolated shell fixtures, no instrument access'),indent=2)+'\n')
 raise SystemExit(0 if result.wasSuccessful() else 1)

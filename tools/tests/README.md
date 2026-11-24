@@ -238,3 +238,12 @@ checks the delivered scripts. Four tests exercise missing/empty shared libraries
 compiler failure, absence of premature launch/success and valid build outputs
 using disposable make/Yorick fixtures. Optional `--report PATH` saves a JSON report.
 No camera, NI driver or installed Yorick is invoked or modified.
+
+## Installation et lanceurs
+
+`python3 tools/tests/check_launchers.py` verifie sous Linux les bibliotheques
+absentes ou vides, les echecs de compilation et la mise a jour de spydr-new.
+L'installation est exercee avec un HOME temporaire et de faux compilateurs :
+la commande precedente reste intacte en cas d'echec, le lanceur historique
+est conserve et les chemins contenant espaces/apostrophes sont correctement
+cites. `--bundle <dossier>` verifie les scripts d'une archive extraite.

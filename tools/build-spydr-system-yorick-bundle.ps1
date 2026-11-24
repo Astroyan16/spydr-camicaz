@@ -24,6 +24,8 @@ Copy-Item -LiteralPath $sourceLib -Destination (Join-Path $OutputDir "libcamicaz
 Copy-Item -LiteralPath $sourceYCam -Destination (Join-Path $OutputDir "yCamicaz") -Recurse
 
 Copy-Item -LiteralPath (Join-Path $templateDir "run_spydr_test.sh") -Destination $OutputDir
+Copy-Item -LiteralPath (Join-Path $templateDir "run_spydr.sh") -Destination $OutputDir
+Copy-Item -LiteralPath (Join-Path $templateDir "install_spydr.sh") -Destination $OutputDir
 Copy-Item -LiteralPath (Join-Path $templateDir "rebuild_with_existing_yorick.sh") -Destination $OutputDir
 Copy-Item -LiteralPath (Join-Path $templateDir "README_SYSTEM_YORICK.md") -Destination $OutputDir
 Copy-Item -LiteralPath (Join-Path $repoRoot "docs\FITS_METADATA.md") -Destination $OutputDir

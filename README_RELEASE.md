@@ -6,46 +6,34 @@ Yorick et les pilotes NI deja installes sur le PC instrument.
 ## Installer et lancer
 
 Extraire le dossier complet dans un emplacement definitif sans espaces.
-Ouvrir un terminal dans ce dossier, puis executer une premiere fois :
+Ouvrir un terminal dans ce dossier, fermer Spydr, puis executer :
 
 ```sh
-sh rebuild_with_existing_yorick.sh
-sh run_spydr_test.sh
+sh install_spydr.sh
 ```
 
-La compilation reste dans le dossier extrait. Elle demande Yorick et ses
-en-tetes, NI-DAQmx, Boost, make, g++ et Python 2/PyGTK. Aucun pilote ou binaire
-camera compile n'est fourni. La version historique et son Yorick sont conserves.
-Pour les lancements suivants, seule la deuxieme commande est necessaire.
-La compilation doit terminer par `Application libraries rebuilt successfully`.
-Les deux bibliotheques `.so` doivent etre non vides. Le lanceur bloque maintenant
-le demarrage si l'une manque ou est vide, avec la commande de reconstruction.
-En cas d'erreur, conserver la sortie de compilation pour identifier sa cause.
+Cette commande compile les bibliotheques dans le dossier extrait, puis cree ou
+actualise `$HOME/bin/spydr-new`. A chaque mise a jour, extraire la nouvelle
+archive dans un nouveau dossier definitif et executer la meme commande.
+En cas d'echec de compilation, `spydr-new` conserve sa version precedente.
+La commande historique `spydr` et son Yorick ne sont pas modifies.
+Garder l'ancien dossier permet de revenir en arriere avec son lanceur.
 
+La compilation demande Yorick et ses en-tetes, NI-DAQmx, Boost, make, g++ et
+Python 2/PyGTK deja installes sur le PC instrument. Aucun pilote ou binaire
+camera compile n'est fourni. En cas d'erreur, conserver la sortie de compilation.
 
-## Commande spydr-new
-
-Depuis ce meme dossier :
+Pour lancer ensuite :
 
 ```sh
-SPYDR_DIR=$(pwd -P)
-mkdir -p "$HOME/bin"
-cat > "$HOME/bin/spydr-new" <<EOF
-#!/bin/sh
-exec /bin/sh "$SPYDR_DIR/run_spydr_test.sh" "\$@"
-EOF
-chmod +x "$HOME/bin/spydr-new"
+spydr-new
 ```
 
-Si `$HOME/bin` n'est pas dans PATH, ajouter cette ligne a `~/.bash_profile`,
-puis ouvrir un nouveau terminal :
-
-```sh
-export PATH="$PATH:$HOME/bin"
-```
-
-La commande `spydr-new` lance cette livraison. La commande `spydr` garde son
-role historique. Le dossier de la nouvelle version doit conserver son emplacement.
+Si la commande n'est pas trouvee, utiliser `$HOME/bin/spydr-new` ; ajouter
+`export PATH="$PATH:$HOME/bin"` dans `~/.bash_profile` pour les prochains terminaux.
+Le lancement direct depuis le dossier reste possible avec `sh run_spydr.sh`.
+Pour compiler sans actualiser la commande, utiliser
+`sh rebuild_with_existing_yorick.sh`.
 
 ## Icone du bureau
 

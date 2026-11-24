@@ -45,7 +45,7 @@ with zipfile.ZipFile(io.BytesIO(raw)) as z:
   data=z.read(item)
   items[dest]=data
   manifest.append(dict(path=dest,git_path=item.filename,git_commit=commit,sha256=hashlib.sha256(data).hexdigest()))
-for launcher_name in ('run_spydr_test.sh','rebuild_with_existing_yorick.sh'):
+for launcher_name in ('run_spydr.sh','install_spydr.sh','rebuild_with_existing_yorick.sh'):
  source='tools/spydr-system-yorick/'+launcher_name
  data=git('show',launchers_commit+':'+source)
  items[launcher_name]=data

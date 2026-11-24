@@ -25,9 +25,13 @@ Telecharger le ZIP ou le tar.gz joint a la release. Extraire dans un NOUVEAU
 dossier Linux sans espaces, puis executer depuis sa racine :
 
 ```sh
-sh rebuild_with_existing_yorick.sh
-sh run_spydr_test.sh
+sh install_spydr.sh
+spydr-new
 ```
+
+L'installation actualise `$HOME/bin/spydr-new` apres une compilation reussie.
+Pour les mises a jour suivantes, extraire la nouvelle archive puis relancer
+`sh install_spydr.sh`. Le lanceur direct se nomme `run_spydr.sh`.
 
 La reconstruction utilise le Yorick et les dependances instrumentales deja
 installes ; les bibliotheques sont compilees dans le nouveau dossier.
